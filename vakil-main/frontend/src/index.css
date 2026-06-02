@@ -94,8 +94,8 @@ code { font-family: 'Courier New', monospace; }
   transition: opacity 0.4s ease, filter 0.4s ease;
 }
 .dark .page-gold-pattern {
-  filter: invert(1) hue-rotate(180deg) brightness(1.15) saturate(1.4);
-  opacity: 0.38 !important;
+  filter: invert(1) hue-rotate(180deg) contrast(1.8) brightness(1.6) saturate(2.5);
+  opacity: 0.55 !important;
 }
 
 /* Cards and panels */

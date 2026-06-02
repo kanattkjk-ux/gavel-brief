@@ -135,7 +135,7 @@ function AppInner() {
           backgroundImage: `url(${process.env.PUBLIC_URL}/gold-pattern.png)`,
           backgroundRepeat: 'repeat',
           backgroundSize: '320px 320px',
-          opacity: isDark ? 0.38 : 0.28,
+          opacity: isDark ? 0.55 : 0.28,
           pointerEvents: 'none',
           userSelect: 'none',
         }}
