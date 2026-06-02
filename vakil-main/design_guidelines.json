@@ -1,0 +1,151 @@
+{
+  "theme_and_archetype": {
+    "domain": "Legal Case Matching Platform",
+    "theme": "Light",
+    "archetype": "4 (Swiss & High-Contrast)",
+    "vibe": "Objective, rigid, functional, authoritative, clear."
+  },
+  "colors": {
+    "background": {
+      "primary": "#FFFFFF",
+      "secondary": "#F5F5F7",
+      "tertiary": "#EBEBEF"
+    },
+    "text": {
+      "primary": "#111111",
+      "secondary": "#555555",
+      "inverse": "#FFFFFF",
+      "accent": "#002FA7"
+    },
+    "accents": {
+      "primary": "#002FA7",
+      "warning": "#FFB800",
+      "danger": "#FF3B30",
+      "success": "#00C853"
+    },
+    "borders": {
+      "default": "#E5E5E5",
+      "focus": "#111111"
+    },
+    "rules": [
+      "Color is Function Only: 95% of the UI must be monochrome. Color exists only to guide action.",
+      "The 'Tinted Grey' Rule: Neutral greys are tinted slightly cool to feel professional, not muddy.",
+      "Never use generic full-screen gradients.",
+      "Hover state color must be a lighter/darker hue of the ACTIVE state color."
+    ]
+  },
+  "typography": {
+    "rules": [
+      "The 'Anti-Default Rule': Do not use Inter, Roboto, Open Sans for headings.",
+      "Headline tracking must be tight (`tracking-tighter`), body loose (`leading-relaxed`).",
+      "Overlines must be uppercase, tiny, and wide spacing (`tracking-[0.2em]`).",
+      "H1 size max text-6xl. Do not use text-7xl+."
+    ],
+    "fonts": {
+      "headings": "Cabinet Grotesk",
+      "body": "IBM Plex Sans",
+      "mono": "IBM Plex Mono"
+    },
+    "scales": {
+      "h1": "text-4xl sm:text-5xl lg:text-6xl tracking-tighter font-medium",
+      "h2": "text-2xl sm:text-3xl lg:text-4xl tracking-tight font-medium",
+      "h3": "text-xl sm:text-2xl tracking-tight font-medium",
+      "h4": "text-lg sm:text-xl font-medium",
+      "body": "text-base leading-relaxed text-[#555555]",
+      "small": "text-sm text-[#555555]",
+      "overline": "text-xs font-mono uppercase tracking-[0.2em] text-[#555555]"
+    }
+  },
+  "spacing_and_layout": {
+    "strategy": "Generous Spacing Philosophy + Grid Borders (The Technical Look)",
+    "rules": [
+      "Containers with borders must have internal padding (p-8 or p-12) to prevent text collision.",
+      "Expose the skeleton. Make the grid visible using `border-collapse` style layouts.",
+      "Mobile-First: Always start with `grid-cols-1`.",
+      "Use 'Tetris' Grid for Marketing/Forms. Use 'Control Room' Grid for Lawyer Dashboard."
+    ],
+    "grids": {
+      "client_form": "grid-cols-1 md:grid-cols-8 lg:grid-cols-12 gap-8 to gap-12. The Form should occupy an offset column span.",
+      "lawyer_dashboard": "grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 to gap-6. Every pixel utilized, `h-full` on children."
+    },
+    "surfaces": {
+      "cards": "Flat background, 1px subtle border (`border-[#E5E5E5]`), no shadow. Max border-radius: 4px (`rounded-sm` or `rounded-none`).",
+      "headers": "Solid Background with a hard bottom border (`border-b border-[#E5E5E5]`).",
+      "footers": "Massive space (`py-24`). Contrast shift (Dark footer if body is light)."
+    }
+  },
+  "components": {
+    "buttons": {
+      "primary": "bg-[#111111] text-white hover:bg-[#333333] rounded-none px-6 py-3 font-medium transition-colors",
+      "secondary": "bg-transparent border border-[#E5E5E5] text-[#111111] hover:border-[#111111] rounded-none px-6 py-3 transition-colors",
+      "accent": "bg-[#002FA7] text-white hover:bg-[#001D66] rounded-none px-6 py-3 transition-colors (Use only for the most critical conversion action)"
+    },
+    "inputs": {
+      "style": "bg-transparent border-b border-[#E5E5E5] hover:border-[#111111] focus:border-[#111111] focus:ring-0 rounded-none px-0 py-3 transition-colors"
+    },
+    "shadcn_customizations": {
+      "general": "Strip 'Vercel-look'. Remove heavy shadows, enforce `rounded-none` or `rounded-sm`. Apply stark 1px borders.",
+      "dialogs": "backdrop-blur-xl bg-white/90 border border-[#E5E5E5] shadow-2xl rounded-sm"
+    }
+  },
+  "motion_and_interactions": {
+    "rules": [
+      "Minimalist animations — use micro-interactions for feedback.",
+      "Fast snappy transitions (`duration-200 ease-out`).",
+      "Hover states must explicitly set text color.",
+      "MUST respect `prefers-reduced-motion`."
+    ]
+  },
+  "icons": {
+    "library": "lucide-react",
+    "rules": "Use stark, geometric icons. 1.5px stroke width. Do not use filled icons unless indicating active state."
+  },
+  "media": {
+    "hero_abstract_legal": {
+      "url": "https://static.prod-images.emergentagent.com/jobs/d7f3f883-9362-42a7-be38-b2215d69451b/images/2c1271645278e368651e90f5dba1a31af9587d9d269e497ebd81aba735266df0.png",
+      "description": "Minimalist abstract architecture, stark white and deep navy blue. Use as the hero image for the landing page or client form background overlay.",
+      "category": "hero"
+    },
+    "trust_pillar": {
+      "url": "https://static.prod-images.emergentagent.com/jobs/d7f3f883-9362-42a7-be38-b2215d69451b/images/ac2887bf06049fbf2c2d1cdf7ea574d191735576c50ee85b7cc3f54ad12186fd.png",
+      "description": "Modern architectural pillar, stark lighting. Use for the 'About' section or Lawyer authentication page background.",
+      "category": "background"
+    },
+    "avatar_1": {
+      "url": "https://images.unsplash.com/photo-1613798392065-2d0b277b9a9c?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjY2NzN8MHwxfHNlYXJjaHwyfHxsYXd5ZXIlMjBtb2Rlcm4lMjBvZmZpY2UlMjBwb3J0cmFpdHxlbnwwfHx8fDE3NzUzOTg3NjR8MA&ixlib=rb-4.1.0&q=85",
+      "description": "Man in black jacket sitting. Use as a sample lawyer avatar.",
+      "category": "avatar"
+    },
+    "avatar_2": {
+      "url": "https://images.unsplash.com/photo-1604241842992-1f5e733449cc?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjY2NzN8MHwxfHNlYXJjaHwxfHxsYXd5ZXIlMjBtb2Rlcm4lMjBvZmZpY2UlMjBwb3J0cmFpdHxlbnwwfHx8fDE3NzUzOTg3NjR8MA&ixlib=rb-4.1.0&q=85",
+      "description": "Man in black suit standing. Use as a sample lawyer avatar.",
+      "category": "avatar"
+    },
+    "avatar_3": {
+      "url": "https://images.unsplash.com/photo-1668271165626-76156f291c4a?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjY2NzN8MHwxfHNlYXJjaHwzfHxsYXd5ZXIlMjBtb2Rlcm4lMjBvZmZpY2UlMjBwb3J0cmFpdHxlbnwwfHx8fDE3NzUzOTg3NjR8MA&ixlib=rb-4.1.0&q=85",
+      "description": "Woman sitting on a chair. Use as a sample client/lawyer avatar.",
+      "category": "avatar"
+    }
+  },
+  "pages_structure": {
+    "client_side": {
+      "homepage": "Split layout or Tetris grid. Left side: striking typography 'Find legal clarity, fast.' Right side: Multi-step case questionnaire inside a stark, bordered container. Include a clear progress bar (monochrome 1px line).",
+      "auth": "Minimalist login/signup forms. Use `trust_pillar` image as a 50% width split-screen background."
+    },
+    "lawyer_side": {
+      "dashboard": "'Control Room' Grid layout. Left sidebar for filters (location, urgency, type). Main area for the Case Feed. Dense, scanable data. Cases should look like data rows or extremely flat cards.",
+      "case_card": "Highlight urgency with `danger` accent. Display type, location, and budget prominently. 'Accept' button should be primary black or accent blue."
+    }
+  },
+  "instructions_to_main_agent": {
+    "critical_rules": [
+      "Use exact hex codes provided in the colors section. Do not introduce custom colors.",
+      "Apply the fonts directly via Tailwind configuration or CSS `@import` (e.g., from Fontshare or Google Fonts).",
+      "All interactive and key informational elements MUST include a `data-testid` attribute (kebab-case, role-based).",
+      "Do NOT use HTML `<select>` or native date pickers. Use Shadcn components and customize them.",
+      "NEVER use placeholder image URLs. Use the media URLs provided in this JSON.",
+      "Ensure components follow the `rounded-none` or `rounded-sm` rules to match the Swiss / Brutalist aesthetic.",
+      "The layout must have strict 1px grid borders visible between major structural elements (The 'Technical' Look)."
+    ]
+  }
+}

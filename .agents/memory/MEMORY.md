@@ -1,0 +1,2 @@
+- [Dark mode system](dark-mode-system.md) — ThemeContext + `dark` class on `<html>`; CSS vars under `.dark`; wine→gold, gold stays gold in dark.
+- [HeroSection 3D performance](hero-3d-performance.md) — Camera 0.19→0.50, RiseGroup 1.45→4.5, reveal delays halved, scroll dur 2800→900; isDark prop threads from HeroSection→GavelScene→BackWall/MarbleFloor/GavelMesh.

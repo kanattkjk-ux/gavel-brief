@@ -1,0 +1,183 @@
+Use:
+- PostgreSQL architecture
+- Supabase-compatible schema
+- UUID primary keys
+- Proper foreign key relationships
+- Clean scalable relational design
+
+DO NOT:
+- build AI prediction systems
+- store full court judgments
+- create lawyer ranking systems
+- create legal advice engines
+- dump raw legal sections into tables
+
+The platform supports BOTH:
+- Civil Law
+- Criminal Law
+
+--------------------------------------------------
+
+DATABASE PURPOSE
+
+The database should transform user legal situations into structured legal intelligence.
+
+Example:
+
+User Input:
+“Police are refusing my FIR”
+
+Database should return:
+- category
+- rights
+- next steps
+- required documents
+- timelines
+- guided questions
+- lawyer recommendation level
+
+--------------------------------------------------
+
+CREATE THESE TABLES
+
+1. legal_domains
+Columns:
+- id
+- name
+- description
+- created_at
+
+2. case_categories
+Columns:
+- id
+- domain_id
+- category_name
+- category_description
+- created_at
+
+3. legal_scenarios
+Columns:
+- id
+- category_id
+- scenario_title
+- simplified_summary
+- complexity_level
+- severity_level
+- lawyer_level
+- created_at
+
+4. keywords
+Columns:
+- id
+- scenario_id
+- keyword
+- created_at
+
+5. legal_rights
+Columns:
+- id
+- scenario_id
+- right_title
+- simplified_right
+- created_at
+
+6. required_actions
+Columns:
+- id
+- scenario_id
+- suggested_action
+- action_priority
+- created_at
+
+7. document_requirements
+Columns:
+- id
+- scenario_id
+- document_name
+- document_priority
+- created_at
+
+8. legal_timelines
+Columns:
+- id
+- scenario_id
+- timeline_title
+- duration
+- description
+- created_at
+
+9. guided_questions
+Columns:
+- id
+- scenario_id
+- question
+- question_order
+- created_at
+
+10. lawyer_recommendations
+Columns:
+- id
+- scenario_id
+- lawyer_specialization
+- experience_level
+- recommendation_reason
+- created_at
+
+11. nyayid_profiles
+Columns:
+- id
+- user_input
+- detected_domain
+- detected_category
+- detected_scenario
+- generated_summary
+- complexity_level
+- created_at
+
+--------------------------------------------------
+
+DATABASE REQUIREMENTS
+
+- Use normalized relational schema
+- Use proper foreign key constraints
+- Add timestamps to all tables
+- Make schema scalable
+- Prepare for future Supabase integration
+- Keep structure legally safe
+- Avoid copyrighted legal database storage
+- Avoid raw legal text dumps
+
+--------------------------------------------------
+
+INSERT SAMPLE MOCK DATA FOR:
+
+CRIMINAL:
+- Police refusing FIR
+- Illegal detention
+- Cyber fraud
+
+CIVIL:
+- Deposit not returned
+- Salary not paid
+- Property dispute
+
+Each scenario must include:
+- rights
+- actions
+- documents
+- timelines
+- guided questions
+- lawyer recommendation level
+
+--------------------------------------------------
+
+FINAL OUTPUT REQUIRED
+
+Generate:
+1. Full SQL schema
+2. CREATE TABLE statements
+3. Foreign key relationships
+4. Mock INSERT statements
+5. Supabase-compatible SQL
+6. Proper indexing suggestions
+7. Ready-to-import PostgreSQL structure

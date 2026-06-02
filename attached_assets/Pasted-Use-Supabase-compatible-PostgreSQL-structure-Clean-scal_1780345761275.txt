@@ -1,0 +1,266 @@
+Use:
+- Supabase-compatible PostgreSQL structure
+- Clean scalable relational schema
+- Proper foreign key relationships
+- UUID primary keys
+- Production-style naming conventions
+
+DO NOT:
+- create AI prediction systems
+- create court judgement storage
+- create lawyer ranking systems
+- create raw legal section dumps
+- create chatbot logic
+
+The database must support BOTH:
+- Civil Law
+- Criminal Law
+
+-----------------------------------
+DATABASE GOAL
+-----------------------------------
+
+The database should transform legal situations into structured legal intelligence.
+
+Example:
+
+User Input:
+“Police are refusing my FIR”
+
+Database should return:
+- category
+- rights
+- suggested actions
+- required documents
+- timelines
+- guided questions
+- lawyer recommendation level
+
+-----------------------------------
+CREATE THESE TABLES
+-----------------------------------
+
+1. legal_domains
+Purpose:
+Stores top-level law domains.
+
+Columns:
+- id
+- name
+- description
+- created_at
+
+Example:
+- Criminal
+- Civil
+
+-----------------------------------
+
+2. case_categories
+Purpose:
+Stores legal issue categories.
+
+Columns:
+- id
+- domain_id
+- category_name
+- category_description
+- created_at
+
+Example:
+- FIR Issues
+- Tenant Disputes
+- Property Disputes
+
+-----------------------------------
+
+3. legal_scenarios
+Purpose:
+Stores real-world user legal situations.
+
+Columns:
+- id
+- category_id
+- scenario_title
+- simplified_summary
+- complexity_level
+- severity_level
+- lawyer_level
+- created_at
+
+Example:
+- Police refusing FIR
+- Deposit not returned
+- Salary not paid
+
+-----------------------------------
+
+4. keywords
+Purpose:
+Used for legal scenario classification.
+
+Columns:
+- id
+- scenario_id
+- keyword
+- created_at
+
+Example:
+- FIR
+- landlord
+- salary
+- cybercrime
+
+-----------------------------------
+
+5. legal_rights
+Purpose:
+Stores simplified legal rights awareness.
+
+Columns:
+- id
+- scenario_id
+- right_title
+- simplified_right
+- created_at
+
+-----------------------------------
+
+6. required_actions
+Purpose:
+Stores practical next steps.
+
+Columns:
+- id
+- scenario_id
+- suggested_action
+- action_priority
+- created_at
+
+-----------------------------------
+
+7. document_requirements
+Purpose:
+Stores required user documents/evidence.
+
+Columns:
+- id
+- scenario_id
+- document_name
+- document_priority
+- created_at
+
+-----------------------------------
+
+8. legal_timelines
+Purpose:
+Stores important legal time limits.
+
+Columns:
+- id
+- scenario_id
+- timeline_title
+- duration
+- description
+- created_at
+
+-----------------------------------
+
+9. guided_questions
+Purpose:
+Stores dynamic legal refinement questions.
+
+Columns:
+- id
+- scenario_id
+- question
+- question_order
+- created_at
+
+-----------------------------------
+
+10. lawyer_recommendations
+Purpose:
+Stores lawyer recommendation logic.
+
+IMPORTANT:
+DO NOT rank lawyers.
+
+Only suggest:
+- specialization
+- seniority level
+- reason
+
+Columns:
+- id
+- scenario_id
+- lawyer_specialization
+- experience_level
+- recommendation_reason
+- created_at
+
+-----------------------------------
+
+11. nyayid_profiles
+Purpose:
+Stores generated structured legal profiles.
+
+Columns:
+- id
+- user_input
+- detected_domain
+- detected_category
+- detected_scenario
+- generated_summary
+- complexity_level
+- created_at
+
+-----------------------------------
+IMPORTANT DATABASE RULES
+-----------------------------------
+
+- Use proper foreign key constraints
+- Use normalized relational structure
+- Use scalable architecture
+- Add timestamps to all tables
+- Prepare schema for future Supabase integration
+- Keep database legally safe
+- Avoid storing copyrighted legal judgments
+- Avoid storing raw law books
+
+-----------------------------------
+MOCK DATA REQUIREMENTS
+-----------------------------------
+
+Insert sample mock data for:
+
+CRIMINAL:
+- Police refusing FIR
+- Illegal detention
+- Cyber fraud
+
+CIVIL:
+- Deposit not returned
+- Salary not paid
+- Property dispute
+
+Each should include:
+- rights
+- actions
+- documents
+- timelines
+- guided questions
+- lawyer recommendations
+
+-----------------------------------
+FINAL OUTPUT REQUIRED
+-----------------------------------
+
+Generate:
+1. Full SQL schema
+2. Table relationships
+3. Mock INSERT statements
+4. Supabase-compatible structure
+5. Clean scalable database design
+6. Proper indexing suggestions
+7. Ready-to-import SQL

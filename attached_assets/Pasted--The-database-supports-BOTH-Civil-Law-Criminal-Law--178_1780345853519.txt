@@ -1,0 +1,173 @@
+
+The database supports BOTH:
+- Civil Law
+- Criminal Law
+
+--------------------------------------------------
+
+TASK
+
+Identify all required database tables and structure them professionally.
+
+Each table must have:
+- table purpose
+- column names
+- relationships
+- sample example rows
+
+--------------------------------------------------
+
+CREATE THESE TABLES
+
+1. legal_domains
+Purpose:
+Stores top-level legal domains.
+
+Example:
+- Criminal
+- Civil
+
+--------------------------------------------------
+
+2. case_categories
+Purpose:
+Stores broad legal issue categories.
+
+Examples:
+- FIR Issues
+- Cybercrime
+- Tenant Disputes
+- Property Disputes
+
+--------------------------------------------------
+
+3. legal_scenarios
+Purpose:
+Stores real-world user legal situations.
+
+Examples:
+- Police refusing FIR
+- Illegal detention
+- Deposit not returned
+- Salary not paid
+
+--------------------------------------------------
+
+4. keywords
+Purpose:
+Maps user keywords to legal scenarios.
+
+Examples:
+- FIR
+- landlord
+- salary
+- cyber fraud
+
+--------------------------------------------------
+
+5. legal_rights
+Purpose:
+Stores simplified legal rights awareness.
+
+Examples:
+- FIR can be filed at any police station
+- Must be produced before magistrate within 24 hours
+
+--------------------------------------------------
+
+6. required_actions
+Purpose:
+Stores practical next-step guidance.
+
+Examples:
+- Submit written complaint
+- Preserve payment proof
+- Approach Superintendent of Police
+
+--------------------------------------------------
+
+7. document_requirements
+Purpose:
+Stores required supporting documents/evidence.
+
+Examples:
+- Rental agreement
+- Salary slips
+- Complaint copy
+
+--------------------------------------------------
+
+8. legal_timelines
+Purpose:
+Stores important legal timelines and deadlines.
+
+Examples:
+- Produce accused within 24 hours
+- Notice response timeline
+
+--------------------------------------------------
+
+9. guided_questions
+Purpose:
+Stores dynamic legal refinement questions.
+
+Examples:
+- Was written complaint submitted?
+- Is there a rental agreement?
+- Was acknowledgement received?
+
+--------------------------------------------------
+
+10. lawyer_recommendations
+Purpose:
+Suggest suitable lawyer specialization and seniority.
+
+IMPORTANT:
+DO NOT rank lawyers.
+
+Only suggest:
+- specialization
+- seniority level
+- recommendation reason
+
+Examples:
+- Senior Criminal Lawyer
+- Junior Civil Lawyer
+
+--------------------------------------------------
+
+11. nyayid_profiles
+Purpose:
+Stores generated structured legal profiles.
+
+Includes:
+- user input
+- detected category
+- detected scenario
+- generated summary
+- complexity level
+
+--------------------------------------------------
+
+IMPORTANT DATABASE RULES
+
+- Use normalized relational schema
+- Keep tables scalable
+- Use proper foreign key relationships
+- Add timestamps to all tables
+- Make structure Supabase-compatible
+- Keep architecture legally safe
+- Avoid copyrighted legal content storage
+
+--------------------------------------------------
+
+FINAL OUTPUT REQUIRED
+
+Generate:
+1. Complete table list
+2. Purpose of each table
+3. Suggested columns
+4. Relationships between tables
+5. Example rows
+6. Scalable database structure
+7. Clean startup-grade database architecture

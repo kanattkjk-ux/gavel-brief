@@ -1,0 +1,76 @@
+modules = ["nodejs-20", "python-3.12", "web", "nix"]
+[agent]
+expertMode = true
+stack = "BEST_EFFORT_FALLBACK"
+
+[nix]
+channel = "stable-25_05"
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Backend API"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Start application"
+
+[[workflows.workflow]]
+name = "Backend API"
+author = "agent"
+
+[workflows.workflow.metadata]
+outputType = "console"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd vakil-main/backend && uvicorn server:app --host localhost --port 8000 --reload"
+waitForPort = 8000
+
+[[workflows.workflow]]
+name = "Start application"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd vakil-main/frontend && PORT=5000 npm start"
+waitForPort = 5000
+
+[workflows.workflow.metadata]
+outputType = "webview"
+
+[[ports]]
+localPort = 5000
+externalPort = 80
+
+[[ports]]
+localPort = 5001
+externalPort = 3000
+
+[[ports]]
+localPort = 5002
+externalPort = 3001
+
+[[ports]]
+localPort = 8000
+externalPort = 8000
+exposeLocalhost = true
+
+[deployment]
+deploymentTarget = "vm"
+run = ["bash", "-c", "cd vakil-main/backend && gunicorn server:app --bind 0.0.0.0:5000 --worker-class uvicorn.workers.UvicornWorker --workers 1 --timeout 120"]
+build = ["bash", "-c", "pip install -r vakil-main/backend/requirements.txt gunicorn --quiet"]
+
+[userenv]
+
+[userenv.shared]
+JWT_SECRET = "f16622d4e62e6ba9769f7465bf1c98db4f0eaafdeb2407ed96fcc50c1a269cf9"
+SUPABASE_URL = "https://tuntezbubswvzbcgstow.supabase.co"
+SUPABASE_SERVICE_ROLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR1bnRlemJ1YnN3dnpiY2dzdG93Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3OTk1ODYxNSwiZXhwIjoyMDk1NTM0NjE1fQ.birq-or1KlR6RmpVVceY-bghew00wHjgDRcghlQa--E"
