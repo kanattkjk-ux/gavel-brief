@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useTheme } from '../contexts/ThemeContext';
 import { Scale, Loader2, ArrowRight, Eye, EyeOff, PenLine } from 'lucide-react';
 
 function formatApiErrorDetail(detail) {
@@ -22,6 +23,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const { login } = useAuth();
+  const { isDark } = useTheme();
   const navigate = useNavigate();
 
   const performLogin = async (loginEmail, loginPassword) => {
@@ -67,7 +69,12 @@ const Login = () => {
       <div className="hidden lg:flex lg:w-1/2 relative overflow-hidden flex-col z-10"
         style={{ background: 'linear-gradient(160deg, #7C1D2B 0%, #5a1420 50%, #3a0c18 100%)' }}>
         <div className="absolute inset-0 opacity-10">
-          <div className="absolute inset-0" style={{backgroundImage: 'radial-gradient(circle at 1px 1px, rgba(255,255,255,0.15) 1px, transparent 0)', backgroundSize: '40px 40px'}}></div>
+          <div className="absolute inset-0" style={{
+            backgroundImage: isDark
+              ? 'radial-gradient(circle at 1px 1px, rgba(212,175,55,0.55) 1px, transparent 0)'
+              : 'radial-gradient(circle at 1px 1px, rgba(255,255,255,0.15) 1px, transparent 0)',
+            backgroundSize: '40px 40px'
+          }}></div>
         </div>
 
         {/* Top: welcome text and form intro */}
@@ -129,7 +136,7 @@ const Login = () => {
       </div>
 
       {/* Right: login form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-white relative z-10">
+      <div className={`w-full lg:w-1/2 flex items-center justify-center p-8 relative z-10 ${isDark ? 'bg-[#141414]' : 'bg-white'}`}>
         <div className="w-full max-w-md">
           <div className="mb-8">
             <h2 className="font-heading text-4xl font-bold text-slate-900 mb-3" data-testid="login-heading">

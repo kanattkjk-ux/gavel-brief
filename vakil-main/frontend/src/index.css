@@ -274,20 +274,59 @@ input::placeholder, textarea::placeholder {
 .dark .bg-emerald-50 { background-color: rgba(16,185,129,0.1) !important; }
 .dark .bg-yellow-50 { background-color: rgba(212,175,55,0.1) !important; }
 
-/* Text */
-.dark .text-foreground { color: #e8e8e8 !important; }
-.dark .text-slate-900, .dark .text-gray-900 { color: #e8e8e8 !important; }
-.dark .text-slate-800, .dark .text-gray-800 { color: #d0d0d0 !important; }
-.dark .text-slate-700, .dark .text-gray-700 { color: #c0c0c0 !important; }
-.dark .text-slate-600, .dark .text-gray-600 { color: #a8a8a8 !important; }
-.dark .text-slate-500, .dark .text-gray-500 { color: #888 !important; }
-.dark .text-slate-400, .dark .text-gray-400 { color: #666 !important; }
-.dark .text-foreground\/70 { color: rgba(232,232,232,0.7) !important; }
-.dark .text-foreground\/75 { color: rgba(232,232,232,0.75) !important; }
-.dark .text-foreground\/60 { color: rgba(232,232,232,0.6) !important; }
-.dark .text-foreground\/50 { color: rgba(232,232,232,0.5) !important; }
-.dark .text-foreground\/40 { color: rgba(232,232,232,0.4) !important; }
-.dark .text-foreground\/30 { color: rgba(232,232,232,0.3) !important; }
+/* Text — warm cream tones instead of cold grey in dark mode */
+.dark .text-foreground { color: #F5EDD8 !important; }
+/* slate */
+.dark .text-slate-900 { color: #F5EDD8 !important; }
+.dark .text-slate-800 { color: #EDE0C4 !important; }
+.dark .text-slate-700 { color: #D9CEAD !important; }
+.dark .text-slate-600 { color: #C4B494 !important; }
+.dark .text-slate-500 { color: #A89578 !important; }
+.dark .text-slate-400 { color: #8A7860 !important; }
+.dark .text-slate-300 { color: #6E5F4C !important; }
+/* gray */
+.dark .text-gray-900 { color: #F5EDD8 !important; }
+.dark .text-gray-800 { color: #EDE0C4 !important; }
+.dark .text-gray-700 { color: #D9CEAD !important; }
+.dark .text-gray-600 { color: #C4B494 !important; }
+.dark .text-gray-500 { color: #A89578 !important; }
+.dark .text-gray-400 { color: #8A7860 !important; }
+/* stone */
+.dark .text-stone-900 { color: #F5EDD8 !important; }
+.dark .text-stone-800 { color: #EDE0C4 !important; }
+.dark .text-stone-700 { color: #D9CEAD !important; }
+.dark .text-stone-600 { color: #C4B494 !important; }
+.dark .text-stone-500 { color: #A89578 !important; }
+.dark .text-stone-400 { color: #8A7860 !important; }
+/* neutral */
+.dark .text-neutral-900 { color: #F5EDD8 !important; }
+.dark .text-neutral-800 { color: #EDE0C4 !important; }
+.dark .text-neutral-700 { color: #D9CEAD !important; }
+.dark .text-neutral-600 { color: #C4B494 !important; }
+.dark .text-neutral-500 { color: #A89578 !important; }
+.dark .text-neutral-400 { color: #8A7860 !important; }
+/* zinc */
+.dark .text-zinc-900 { color: #F5EDD8 !important; }
+.dark .text-zinc-800 { color: #EDE0C4 !important; }
+.dark .text-zinc-700 { color: #D9CEAD !important; }
+.dark .text-zinc-600 { color: #C4B494 !important; }
+.dark .text-zinc-500 { color: #A89578 !important; }
+.dark .text-zinc-400 { color: #8A7860 !important; }
+/* black and hardcoded near-black */
+.dark .text-black { color: #F5EDD8 !important; }
+/* hardcoded hex dark colors used across pages */
+.dark .text-\[\#171717\] { color: #F5EDD8 !important; }
+.dark .text-\[\#292524\] { color: #EDE0C4 !important; }
+.dark .text-\[\#57534E\] { color: #C4B494 !important; }
+.dark .text-\[\#78716C\] { color: #A89578 !important; }
+.dark .text-\[\#44403C\] { color: #D9CEAD !important; }
+.dark .text-\[\#0d0d0d\] { color: #F5EDD8 !important; }
+.dark .text-foreground\/70 { color: rgba(245,237,216,0.7) !important; }
+.dark .text-foreground\/75 { color: rgba(245,237,216,0.75) !important; }
+.dark .text-foreground\/60 { color: rgba(245,237,216,0.6) !important; }
+.dark .text-foreground\/50 { color: rgba(245,237,216,0.5) !important; }
+.dark .text-foreground\/40 { color: rgba(245,237,216,0.4) !important; }
+.dark .text-foreground\/30 { color: rgba(245,237,216,0.3) !important; }
 
 /* Borders */
 .dark .border-border { border-color: rgba(255,255,255,0.1) !important; }
@@ -325,6 +364,19 @@ input::placeholder, textarea::placeholder {
 
 /* Page backgrounds */
 .dark .min-h-screen { background-color: #0d0d0d; }
+/* hardcoded cream/light page backgrounds */
+.dark .bg-\[\#FFFDF7\] { background-color: #0d0d0d !important; }
+.dark .bg-\[\#FFFDF6\] { background-color: #0d0d0d !important; }
+.dark .bg-\[\#FFF8F0\] { background-color: #0d0d0d !important; }
+.dark .bg-\[\#F9F5EE\] { background-color: #111111 !important; }
+.dark .bg-\[\#F5F0E8\] { background-color: #111111 !important; }
+/* hardcoded white card/panel backgrounds */
+.dark .bg-\[\#FFFFFF\] { background-color: #141414 !important; }
+.dark .bg-\[\#ffffff\] { background-color: #141414 !important; }
+/* light border colors in dark mode */
+.dark .border-\[\#EFE7D6\] { border-color: rgba(212,175,55,0.15) !important; }
+.dark .border-\[\#E5E5E5\] { border-color: rgba(255,255,255,0.08) !important; }
+.dark .border-\[\#D4AF37\] { border-color: rgba(212,175,55,0.4) !important; }
 
 /* Rebrand — dark mode: keep burgundy for buttons/CTAs, gold for decorative */
 .dark .bg-slate-900, .dark .bg-slate-800, .dark .bg-slate-700,
