@@ -5,7 +5,8 @@ import Navbar from '../components/Navbar';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Filter, MapPin, Calendar, DollarSign, AlertCircle, CheckCircle2, Loader2, Send, Users, ArrowRight, ChevronDown, ChevronUp, Shield, Briefcase, FileText, Clock, User, MessageCircle, TrendingUp, Star, Zap, Award, Upload, Download, Trash2, Paperclip, File as FileIcon, Image as ImageIcon, StickyNote } from 'lucide-react';
+import { Filter, MapPin, Calendar, DollarSign, AlertCircle, CheckCircle2, Loader2, Send, Users, ArrowRight, ChevronDown, ChevronUp, Shield, Briefcase, FileText, Clock, User, MessageCircle, TrendingUp, Star, Zap, Award, Upload, Download, Trash2, Paperclip, File as FileIcon, Image as ImageIcon, StickyNote, BookOpen, Database } from 'lucide-react';
+import KnowledgeBase from '../components/KnowledgeBase';
 
 import API_URL from '../lib/api';
 import CaseChat from '../components/CaseChat';
@@ -283,6 +284,7 @@ const LawyerDashboard = () => {
                 { id: 'mycases', label: 'My Active Cases', icon: Briefcase },
                 { id: 'referrals', label: 'Referrals', icon: Send },
                 { id: 'performance', label: 'Performance', icon: TrendingUp },
+                { id: 'knowledge', label: 'Knowledge Base', icon: Database },
               ].map(({ id, label, icon: Icon }) => (
                 <button
                   key={id}
@@ -1165,6 +1167,10 @@ const LawyerDashboard = () => {
               </div>
             )}
           </div>
+        )}
+
+        {activeTab === 'knowledge' && (
+          <KnowledgeBase />
         )}
       </div>
       </div>

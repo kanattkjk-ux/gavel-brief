@@ -40,8 +40,41 @@ else:
     _mongo_client = AsyncIOMotorClient(mongo_url)
     db = _mongo_client["vakilsetu_db"]
     logging.info("Using MongoDB as database backend")
-# Emergent LLM key for OpenAI via proxy
-EMERGENT_LLM_KEY = os.environ.get("EMERGENT_LLM_KEY")
+# OpenAI (standard SDK — set OPENAI_API_KEY in Replit Secrets)
+OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY") or os.environ.get("EMERGENT_LLM_KEY")
+EMERGENT_LLM_KEY = OPENAI_API_KEY  # backward compat
+
+async def _chat_complete(
+    system_msg: str,
+    user_msg: str,
+    model: str = "gpt-4o-mini",
+    json_mode: bool = False,
+) -> str:
+    """Thin async wrapper around the OpenAI Chat Completions API."""
+    from openai import AsyncOpenAI
+    if not OPENAI_API_KEY:
+        raise ValueError("OPENAI_API_KEY not configured")
+    client = AsyncOpenAI(api_key=OPENAI_API_KEY)
+    kwargs: Dict[str, Any] = {
+        "model": model,
+        "messages": [
+            {"role": "system", "content": system_msg},
+            {"role": "user",   "content": user_msg},
+        ],
+    }
+    if json_mode:
+        kwargs["response_format"] = {"type": "json_object"}
+    resp = await client.chat.completions.create(**kwargs)
+    return resp.choices[0].message.content or ""
+
+async def _embed(text: str) -> List[float]:
+    """Generate a 1536-dim embedding using text-embedding-3-small."""
+    from openai import AsyncOpenAI
+    if not OPENAI_API_KEY:
+        raise ValueError("OPENAI_API_KEY not configured")
+    client = AsyncOpenAI(api_key=OPENAI_API_KEY)
+    resp = await client.embeddings.create(model="text-embedding-3-small", input=text[:8000])
+    return resp.data[0].embedding
 
 # Legal writer: amount credited on draft submission (currency-agnostic points)
 LEGAL_WRITER_SUBMIT_BONUS = float(os.environ.get("LEGAL_WRITER_SUBMIT_BONUS", "100"))
@@ -319,13 +352,8 @@ async def find_matched_lawyers(case_type: str, location: str, urgency: str, top_
     return results
 
 async def generate_legal_analysis(case_description: str, case_type: str, location: str, relevant_laws: List[Dict[str, Any]], similar_cases: List[Dict[str, Any]] = []) -> str:
-    """Generate legal analysis using GPT-4o-mini via Emergent LLM"""
+    """Generate legal analysis using GPT-4o-mini"""
     try:
-        from emergentintegrations.llm.chat import LlmChat, UserMessage
-        
-        # Check if EMERGENT_LLM_KEY is available
-        if not EMERGENT_LLM_KEY:
-            raise ImportError("EMERGENT_LLM_KEY not configured")
         
         # Prepare context from relevant laws
         laws_context = "\n\n".join([
@@ -365,15 +393,7 @@ Based on above information, please provide:
 
 Keep the language simple and avoid legal jargon. Remember: DO NOT predict outcomes."""
         
-        # Initialize chat with Emergent LLM
-        chat = LlmChat(
-            api_key=EMERGENT_LLM_KEY,
-            session_id=f"legal_analysis_{datetime.now().timestamp()}",
-            system_message=system_message
-        ).with_model("openai", "gpt-4o-mini")
-        
-        # Send message and get response
-        response = await chat.send_message(UserMessage(text=user_message))
+        response = await _chat_complete(system_message, user_message)
         return response
         
     except ImportError as e:
@@ -427,25 +447,13 @@ async def extract_keywords_ai(text: str) -> Dict[str, Any]:
     """Extract legal keywords using AI"""
     # Try to use AI if available, otherwise fall back to rule-based extraction
     try:
-        from emergentintegrations.llm.chat import LlmChat, UserMessage
-        
-        # Check if EMERGENT_LLM_KEY is available
-        if not EMERGENT_LLM_KEY:
-            raise ImportError("EMERGENT_LLM_KEY not configured")
         
         system_message = """You are a legal keyword extraction expert. Extract relevant legal keywords, terms, and phrases from given text. 
 Return a JSON with: keywords (list), suggested_category (one of: Criminal, Civil, Family, Property, Employment), confidence (0-100), reasoning (why this category)."""
         
         user_message = f"Extract legal keywords and suggest category for: {text}"
         
-        chat = LlmChat(
-            api_key=EMERGENT_LLM_KEY,
-            session_id=f"keyword_extract_{datetime.now().timestamp()}",
-            system_message=system_message
-        ).with_model("openai", "gpt-4o-mini")
-        
-        response = await chat.send_message(UserMessage(text=user_message))
-        # Parse JSON response
+        response = await _chat_complete(system_message, user_message, json_mode=True)
         import json
         result = json.loads(response)
         return result
@@ -2915,9 +2923,7 @@ async def rag_answer(query: str = Body(...), context: str = Body(default=""), se
     Reduces hallucination by anchoring every answer to retrieved documents.
     """
     try:
-        from emergentintegrations.llm.chat import LlmChat, UserMessage
-
-        if not EMERGENT_LLM_KEY:
+        if not OPENAI_API_KEY:
             raise HTTPException(status_code=503, detail="AI key not configured")
 
         # Retrieve if no context provided
@@ -2949,13 +2955,7 @@ User Legal Query: {query}
 
 Provide a grounded, cited answer based strictly on the above context."""
 
-        chat = LlmChat(
-            api_key=EMERGENT_LLM_KEY,
-            session_id=session_id or f"rag_answer_{datetime.now().timestamp()}",
-            system_message=system_msg,
-        ).with_model("openai", "gpt-4o-mini")
-
-        answer = await chat.send_message(UserMessage(text=prompt))
+        answer = await _chat_complete(system_msg, prompt)
         return {"answer": answer, "context_used": bool(context), "query": query}
 
     except Exception as e:
@@ -3002,11 +3002,6 @@ async def _generate_rag_question(
         return None
 
     try:
-        from emergentintegrations.llm.chat import LlmChat, UserMessage
-
-        if not EMERGENT_LLM_KEY:
-            raise ImportError("EMERGENT_LLM_KEY not configured")
-
         answered_summary = ""
         if previous_answers:
             answered_summary = "\n".join(
@@ -3035,13 +3030,7 @@ Rules:
             context_parts.append(f"Questions Already Asked and Answered:\n{answered_summary}")
         context_parts.append(f"This will be question #{question_index + 1} of {MAX_QUESTIONS}.")
 
-        chat = LlmChat(
-            api_key=EMERGENT_LLM_KEY,
-            session_id=f"rag_questions_{datetime.now().timestamp()}",
-            system_message=system_message,
-        ).with_model("openai", "gpt-4o-mini")
-
-        response = await chat.send_message(UserMessage(text="\n".join(context_parts)))
+        response = await _chat_complete(system_message, "\n".join(context_parts))
         raw = response.strip()
         if raw.startswith("```"):
             raw = raw.split("```")[1]
@@ -3313,11 +3302,6 @@ async def create_consultation_request(request: ConsultationRequest, current_user
 async def generate_affidavit(request: AffidavitRequest, current_user: dict = Depends(get_current_user)):
     """Generate an affidavit draft using AI"""
     try:
-        from emergentintegrations.llm.chat import LlmChat, UserMessage
-        
-        # Check if EMERGENT_LLM_KEY is available
-        if not EMERGENT_LLM_KEY:
-            raise ImportError("EMERGENT_LLM_KEY not configured")
         
         system_message = """You are a legal document drafting assistant specializing in Indian legal documents. 
 Generate a properly formatted affidavit based on the provided details.
@@ -3337,13 +3321,7 @@ Include spaces for signature, date, and notary attestation."""
 
 Format it as a proper legal affidavit ready for printing."""
         
-        chat = LlmChat(
-            api_key=EMERGENT_LLM_KEY,
-            session_id=f"affidavit_{datetime.now().timestamp()}",
-            system_message=system_message
-        ).with_model("openai", "gpt-4o-mini")
-        
-        response = await chat.send_message(UserMessage(text=user_message))
+        response = await _chat_complete(system_message, user_message)
         
         return {
             "affidavit_text": response,
@@ -3412,23 +3390,12 @@ async def translate_text(request: TranslateRequest):
         raise HTTPException(status_code=400, detail=f"Unsupported language. Supported: {', '.join(supported_languages)}")
     
     try:
-        from emergentintegrations.llm.chat import LlmChat, UserMessage
-        
-        # Check if EMERGENT_LLM_KEY is available
-        if not EMERGENT_LLM_KEY:
-            raise ImportError("EMERGENT_LLM_KEY not configured")
         
         system_message = f"""You are a legal translation expert. Translate the given legal text into {request.target_language}. 
 Maintain legal terminology accuracy. Provide the translation in the native script of {request.target_language}.
 Only return the translated text, no explanations."""
         
-        chat = LlmChat(
-            api_key=EMERGENT_LLM_KEY,
-            session_id=f"translate_{datetime.now().timestamp()}",
-            system_message=system_message
-        ).with_model("openai", "gpt-4o-mini")
-        
-        response = await chat.send_message(UserMessage(text=request.text))
+        response = await _chat_complete(system_message, request.text)
         
         return {
             "original_text": request.text,
@@ -3853,11 +3820,6 @@ async def draft_submit(draft_id: str, current_user: dict = Depends(get_current_u
 async def legal_chat(request: ChatRequest):
     """AI-powered legal chatbot for common questions"""
     try:
-        from emergentintegrations.llm.chat import LlmChat, UserMessage
-        
-        # Check if EMERGENT_LLM_KEY is available
-        if not EMERGENT_LLM_KEY:
-            raise ImportError("EMERGENT_LLM_KEY not configured")
         
         system_message = """You are VakilSetu's legal assistant chatbot. You help users understand basic legal concepts in India.
 Rules:
@@ -3869,13 +3831,7 @@ Rules:
         
         session = request.session_id or f"chat_{datetime.now().timestamp()}"
         
-        chat = LlmChat(
-            api_key=EMERGENT_LLM_KEY,
-            session_id=session,
-            system_message=system_message
-        ).with_model("openai", "gpt-4o-mini")
-        
-        response = await chat.send_message(UserMessage(text=request.message))
+        response = await _chat_complete(system_message, request.message)
         
         return {
             "response": response,
@@ -3939,6 +3895,81 @@ This is general information only and does not constitute legal advice."""
         "session_id": request.session_id,
         "fallback_used": True
     }
+
+
+# ============ KNOWLEDGE BASE ============
+
+class IngestDocumentRequest(BaseModel):
+    title: str
+    content: str
+    source_type: str = "manual"
+    tags: Optional[List[str]] = []
+
+@api_router.post("/ingest-document")
+async def ingest_document(request: IngestDocumentRequest, current_user: dict = Depends(get_current_user)):
+    """Ingest a document into the knowledge base with optional embedding"""
+    if current_user.get("role") != "lawyer":
+        raise HTTPException(status_code=403, detail="Only lawyers can add knowledge base documents")
+    try:
+        embedding = None
+        if OPENAI_API_KEY:
+            try:
+                embedding = await _embed(request.content[:8000])
+            except Exception as emb_err:
+                logging.warning(f"Embedding skipped: {emb_err}")
+
+        chunk_count = max(1, len(request.content) // 500)
+        doc = {
+            "lawyer_id": current_user["id"],
+            "title": request.title,
+            "content": request.content,
+            "source_type": request.source_type,
+            "tags": request.tags or [],
+            "embedding": embedding,
+            "chunk_count": chunk_count,
+            "created_at": datetime.now(timezone.utc).isoformat(),
+        }
+        doc_id = await db.kb_documents.insert_one(doc)
+        return {
+            "id": str(doc_id),
+            "title": request.title,
+            "chunk_count": chunk_count,
+            "embedded": embedding is not None,
+            "created_at": doc["created_at"],
+        }
+    except Exception as e:
+        logging.error(f"Error ingesting document: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.get("/kb/documents")
+async def list_kb_documents(current_user: dict = Depends(get_current_user)):
+    """List all knowledge base documents for the current lawyer"""
+    if current_user.get("role") != "lawyer":
+        raise HTTPException(status_code=403, detail="Only lawyers can view the knowledge base")
+    docs = await db.kb_documents.find({"lawyer_id": current_user["id"]})
+    return [
+        {
+            "id": str(d.get("_id", d.get("id", ""))),
+            "title": d.get("title", ""),
+            "source_type": d.get("source_type", "manual"),
+            "tags": d.get("tags", []),
+            "chunk_count": d.get("chunk_count", 0),
+            "created_at": d.get("created_at", ""),
+        }
+        for d in docs
+    ]
+
+
+@api_router.delete("/kb/documents/{doc_id}")
+async def delete_kb_document(doc_id: str, current_user: dict = Depends(get_current_user)):
+    """Delete a knowledge base document"""
+    if current_user.get("role") != "lawyer":
+        raise HTTPException(status_code=403, detail="Only lawyers can delete knowledge base documents")
+    deleted = await db.kb_documents.delete_one({"id": doc_id, "lawyer_id": current_user["id"]})
+    if not deleted:
+        raise HTTPException(status_code=404, detail="Document not found")
+    return {"success": True}
 
 
 # ============ NOTIFICATIONS ============
@@ -4280,23 +4311,28 @@ async def create_checkout(request: CreateCheckoutRequest, current_user: dict = D
     package = CONSULTATION_PACKAGES[request.package_id]
     
     try:
-        from emergentintegrations.payments.stripe.checkout import StripeCheckout, CheckoutSessionRequest
+        import stripe as _stripe
         
         # Check if STRIPE_API_KEY is available
         if not STRIPE_API_KEY:
             raise ImportError("STRIPE_API_KEY not configured")
         
+        _stripe.api_key = STRIPE_API_KEY
+        
         success_url = f"{request.origin_url}/client/payment-success?session_id={{CHECKOUT_SESSION_ID}}"
         cancel_url = f"{request.origin_url}/client/dashboard"
         
-        host_url = request.origin_url.rstrip('/')
-        webhook_url = f"{host_url}/api/webhook/stripe"
-        
-        stripe_checkout = StripeCheckout(api_key=STRIPE_API_KEY, webhook_url=webhook_url)
-        
-        checkout_req = CheckoutSessionRequest(
-            amount=package["amount"],
-            currency="usd",
+        session = _stripe.checkout.Session.create(
+            payment_method_types=["card"],
+            line_items=[{
+                "price_data": {
+                    "currency": "usd",
+                    "product_data": {"name": package["name"]},
+                    "unit_amount": int(package["amount"] * 100),
+                },
+                "quantity": 1,
+            }],
+            mode="payment",
             success_url=success_url,
             cancel_url=cancel_url,
             metadata={
@@ -4308,11 +4344,9 @@ async def create_checkout(request: CreateCheckoutRequest, current_user: dict = D
             }
         )
         
-        session = await stripe_checkout.create_checkout_session(checkout_req)
-        
         # Save transaction
         await db.payment_transactions.insert_one({
-            "session_id": session.session_id,
+            "session_id": session.id,
             "user_id": current_user["id"],
             "user_email": current_user["email"],
             "lawyer_id": request.lawyer_id,
@@ -4327,7 +4361,7 @@ async def create_checkout(request: CreateCheckoutRequest, current_user: dict = D
             "created_at": datetime.now(timezone.utc)
         })
         
-        return {"url": session.url, "session_id": session.session_id}
+        return {"url": session.url, "session_id": session.id}
         
     except ImportError as e:
         logging.warning(f"Payment dependencies not available: {str(e)}. Using fallback payment response.")
@@ -4380,17 +4414,14 @@ def _fallback_payment_response(request: CreateCheckoutRequest, package: Dict[str
 async def get_payment_status(session_id: str, current_user: dict = Depends(get_current_user)):
     """Check payment status"""
     try:
-        from emergentintegrations.payments.stripe.checkout import StripeCheckout
+        import stripe as _stripe
         
         # Check if STRIPE_API_KEY is available
         if not STRIPE_API_KEY:
             raise ImportError("STRIPE_API_KEY not configured")
         
-        host_url = os.environ.get("REACT_APP_API_URL", "http://localhost:8001")
-        webhook_url = f"{host_url}/api/webhook/stripe"
-        stripe_checkout = StripeCheckout(api_key=STRIPE_API_KEY, webhook_url=webhook_url)
-        
-        status = await stripe_checkout.get_checkout_status(session_id)
+        _stripe.api_key = STRIPE_API_KEY
+        status = _stripe.checkout.Session.retrieve(session_id)
         
         # Update transaction
         update_data = {
@@ -4494,24 +4525,37 @@ def _fallback_payment_status(session_id: str) -> Dict[str, Any]:
 async def stripe_webhook(request: Request):
     """Handle Stripe webhooks"""
     try:
-        from emergentintegrations.payments.stripe.checkout import StripeCheckout
+        import stripe as _stripe, json as _wh_json
         
-        # Check if STRIPE_API_KEY is available
         if not STRIPE_API_KEY:
             raise ImportError("STRIPE_API_KEY not configured")
         
+        _stripe.api_key = STRIPE_API_KEY
         body = await request.body()
-        host_url = os.environ.get("REACT_APP_API_URL", "http://localhost:8001")
-        webhook_url = f"{host_url}/api/webhook/stripe"
-        stripe_checkout = StripeCheckout(api_key=STRIPE_API_KEY, webhook_url=webhook_url)
+        sig = request.headers.get("Stripe-Signature", "")
+        wh_secret = os.environ.get("STRIPE_WEBHOOK_SECRET", "")
         
-        webhook_response = await stripe_checkout.handle_webhook(body, request.headers.get("Stripe-Signature"))
+        try:
+            if wh_secret:
+                event = _stripe.Webhook.construct_event(body, sig, wh_secret)
+                etype = event["type"]
+                eobj = event["data"]["object"]
+            else:
+                event = _wh_json.loads(body)
+                etype = event.get("type", "")
+                eobj = event.get("data", {}).get("object", {})
+        except Exception as we:
+            logging.warning(f"Webhook parse error: {we}")
+            return {"status": "ignored"}
         
-        if webhook_response.payment_status == "paid":
-            await db.payment_transactions.update_one(
-                {"session_id": webhook_response.session_id},
-                {"$set": {"payment_status": "paid", "updated_at": datetime.now(timezone.utc)}}
-            )
+        if etype == "checkout.session.completed":
+            sid_wh = eobj.get("id") if isinstance(eobj, dict) else getattr(eobj, "id", None)
+            ps_wh = eobj.get("payment_status") if isinstance(eobj, dict) else getattr(eobj, "payment_status", None)
+            if ps_wh == "paid" and sid_wh:
+                await db.payment_transactions.update_one(
+                    {"session_id": sid_wh},
+                    {"$set": {"payment_status": "paid", "updated_at": datetime.now(timezone.utc)}}
+                )
         
         return {"status": "ok"}
         

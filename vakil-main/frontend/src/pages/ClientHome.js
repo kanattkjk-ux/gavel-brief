@@ -4,6 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import Navbar from '../components/Navbar';
 import DocumentUpload from '../components/DocumentUpload';
 import NyayIDCard from '../components/NyayIDCard';
+import CaseStatusTracker from '../components/CaseStatusTracker';
 import axios from 'axios';
 import toast from 'react-hot-toast';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -895,6 +896,7 @@ const ClientHome = () => {
     <div className="min-h-screen relative" style={{ background: 'var(--theme-bg)', isolation: 'isolate' }} data-testid="client-home-page">
       <div aria-hidden="true" className="page-gold-pattern" style={{ position: 'fixed', inset: 0, zIndex: -1, backgroundImage: `url(${process.env.PUBLIC_URL}/gold-pattern.png)`, backgroundRepeat: 'repeat', backgroundSize: '320px 320px', opacity: 0.18, pointerEvents: 'none' }} />
       <Navbar />
+      <CaseStatusTracker />
 
       <div className="max-w-7xl mx-auto px-6 pt-24 pb-10">
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-10">

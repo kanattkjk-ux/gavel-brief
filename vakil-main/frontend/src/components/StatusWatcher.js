@@ -63,29 +63,41 @@ function fireToast(caseType, oldStatus, newStatus) {
     (t) => (
       <div
         onClick={() => { toast.dismiss(t.id); window.location.href = '/client/cases'; }}
-        className={`cursor-pointer max-w-sm w-full bg-white shadow-xl rounded-2xl border border-slate-200 flex items-start gap-3 px-4 py-4 transition-all duration-300 ${
+        className={`cursor-pointer max-w-sm w-full shadow-2xl rounded-2xl flex items-start gap-3 px-4 py-4 transition-all duration-300 ${
           t.visible ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2'
         }`}
+        style={{
+          background: 'var(--theme-surface, #fff)',
+          border: '1px solid var(--theme-border, #E5E5E5)',
+          boxShadow: '0 8px 32px rgba(0,0,0,0.18)',
+        }}
       >
         <div className="text-2xl flex-shrink-0 mt-0.5">{emoji}</div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-0.5">
-            <p className="text-sm font-bold text-slate-900 truncate">Case Status Updated</p>
+            <p className="text-sm font-bold truncate" style={{ color: 'var(--theme-text, #111)' }}>
+              Case Status Updated
+            </p>
             <span className="flex-shrink-0 flex items-center gap-1">
               <span className="relative flex h-1.5 w-1.5">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
                 <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-green-500" />
               </span>
-              <span className="text-[10px] font-bold uppercase tracking-wider text-green-600">Live</span>
+              <span className="text-[10px] font-bold uppercase tracking-wider text-green-500">Live</span>
             </span>
           </div>
-          <p className="text-xs text-slate-500 truncate">{caseType || 'Your case'}</p>
+          <p className="text-xs truncate" style={{ color: 'var(--theme-text-muted, #666)' }}>
+            {caseType || 'Your case'}
+          </p>
           <div className="flex items-center gap-2 mt-2">
-            <span className="text-xs text-slate-400 line-through">{oldLabel}</span>
-            <span className="text-slate-300">→</span>
-            <span className="text-xs font-semibold text-slate-800 bg-amber-50 border border-amber-200 px-1.5 py-0.5 rounded-md">{label}</span>
+            <span className="text-xs line-through" style={{ color: 'var(--theme-text-muted, #999)' }}>{oldLabel}</span>
+            <span style={{ color: 'var(--theme-text-muted, #ccc)' }}>→</span>
+            <span className="text-xs font-semibold px-1.5 py-0.5 rounded-md"
+                  style={{ background: 'rgba(212,175,55,0.15)', border: '1px solid rgba(212,175,55,0.35)', color: '#A08020' }}>
+              {label}
+            </span>
           </div>
-          <p className="text-[10px] text-slate-400 mt-1.5">Click to view your cases</p>
+          <p className="text-[10px] mt-1.5" style={{ color: 'var(--theme-text-muted, #aaa)' }}>Click to view your cases</p>
         </div>
       </div>
     ),

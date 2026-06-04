@@ -1,7 +1,27 @@
+:root {
+  --theme-bg: #F5F0E8;
+  --theme-surface: #FFFFFF;
+  --theme-border: #E5DDD0;
+  --theme-text: #1A1614;
+  --theme-text-muted: #6B5E52;
+  --theme-gold: #D4AF37;
+  --theme-maroon: #7C1D2B;
+}
+
+.dark {
+  --theme-bg: #0F0D0B;
+  --theme-surface: #1C1916;
+  --theme-border: #2E2820;
+  --theme-text: #F0EBE0;
+  --theme-text-muted: #9E9082;
+  --theme-gold: #D4AF37;
+  --theme-maroon: #C23B52;
+}
+
 .app-container {
   min-height: 100vh;
-  background-color: #FFFFFF;
-  color: #111111;
+  background-color: var(--theme-bg, #FFFFFF);
+  color: var(--theme-text, #111111);
 }
 
 
