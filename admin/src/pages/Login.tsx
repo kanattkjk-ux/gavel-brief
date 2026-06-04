@@ -88,6 +88,43 @@ export default function Login() {
               {loading ? 'Signing in…' : 'Sign In'}
             </button>
           </form>
+
+          <div className="mt-4 pt-4 border-t border-white/[0.08]">
+            <p className="text-[11px] text-gray-500 text-center mb-2.5 uppercase tracking-wider font-medium">Demo Access</p>
+            <button
+              type="button"
+              disabled={loading}
+              onClick={async () => {
+                const demoEmail = 'admin@gavelandbrief.com'
+                const demoPass = 'Admin@GB2024'
+                setEmail(demoEmail)
+                setPassword(demoPass)
+                setLoading(true)
+                try {
+                  const res = await adminApi.login(demoEmail, demoPass)
+                  setToken(res.data.token)
+                  toast.success('Signed in as Admin')
+                  navigate('/dashboard')
+                } catch {
+                  toast.error('Demo login failed')
+                } finally {
+                  setLoading(false)
+                }
+              }}
+              className="w-full flex items-center justify-between px-4 py-2.5 rounded-xl border border-white/[0.08] bg-white/[0.03] hover:bg-white/[0.06] hover:border-brand-500/40 transition-all group disabled:opacity-50"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-7 h-7 rounded-full bg-brand-600/25 border border-brand-500/30 flex items-center justify-center">
+                  <Scale size={13} className="text-brand-400" />
+                </div>
+                <div className="text-left">
+                  <p className="text-xs font-semibold text-gray-200">Admin Demo</p>
+                  <p className="text-[10px] text-gray-500">admin@gavelandbrief.com</p>
+                </div>
+              </div>
+              <span className="text-xs text-gray-600 group-hover:text-brand-400 transition-colors">→</span>
+            </button>
+          </div>
         </div>
 
         <p className="text-center text-xs text-gray-600 mt-6">

@@ -77,7 +77,7 @@ export default function CaseStatusPage() {
       <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/90 backdrop-blur-md">
         <div className="max-w-4xl mx-auto px-4 h-14 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2.5">
-            <img src="/logo-nobg.png" alt="Gavel & Brief" className="w-8 h-8 object-contain" />
+            <img src="/logo-circular.png" alt="Gavel & Brief" className="w-8 h-8 object-contain" />
             <span className="font-serif font-bold text-slate-900 text-sm">Gavel &amp; Brief</span>
           </Link>
           <div className="flex items-center gap-2 text-xs text-slate-500">

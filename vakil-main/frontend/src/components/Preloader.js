@@ -151,7 +151,7 @@ const Preloader = ({ onComplete }) => {
                   background: 'transparent',
                 }}
               >
-                <img src="/logo-nobg.png" alt="Gavel & Brief" className="w-full h-full object-contain" />
+                <img src="/logo-circular.png" alt="Gavel & Brief" className="w-full h-full object-contain" />
               </motion.div>
 
               {/* Name */}

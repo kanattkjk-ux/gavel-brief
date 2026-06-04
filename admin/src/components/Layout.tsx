@@ -37,9 +37,9 @@ export default function Layout() {
       >
         {/* Logo */}
         <div className="flex items-center gap-3 px-4 py-5 border-b border-white/[0.08]">
-          <div className="w-8 h-8 bg-brand-600 rounded-lg flex items-center justify-center flex-shrink-0">
-            <Scale size={16} className="text-white" />
-          </div>
+          <img src="/logo-circular.png" alt="Gavel & Brief"
+            className="w-9 h-9 object-contain flex-shrink-0"
+            style={{ filter: 'drop-shadow(0 0 8px rgba(201,168,76,0.4))' }} />
           {sidebarOpen && (
             <div className="min-w-0">
               <p className="font-display text-sm font-semibold text-white leading-tight">Gavel &amp; Brief</p>

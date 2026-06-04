@@ -74,7 +74,7 @@ const Navbar = () => {
       data-testid="navbar"
     >
       <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')} data-testid="navbar-logo">
-        <img src="/logo-nobg.png" alt="Gavel & Brief" className="w-9 h-9 rounded-full object-cover" style={{ objectPosition: 'center 20%' }} />
+        <img src="/logo-circular.png" alt="Gavel & Brief" className="w-9 h-9 object-contain" />
         <span className="font-serif text-lg font-bold tracking-tight" style={{ color: isDark ? '#e8e8e8' : 'var(--theme-fg)' }}>
           Gavel &amp; Brief
         </span>

@@ -72,6 +72,16 @@ webpackConfig.devServer = (devServerConfig) => {
       changeOrigin: true,
       secure: false,
     },
+    "/admin/api": {
+      target: "http://localhost:8000",
+      changeOrigin: true,
+      secure: false,
+    },
+    "/gb-admin": {
+      target: "http://localhost:8000",
+      changeOrigin: true,
+      secure: false,
+    },
     "/ws/video": {
       target: "ws://localhost:8000",
       changeOrigin: true,

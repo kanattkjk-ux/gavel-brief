@@ -5165,3 +5165,18 @@ if _frontend_build.exists() and (_frontend_build / "static").exists():
     async def serve_react(full_path: str):
         index = _frontend_build / "index.html"
         return FileResponse(str(index))
+
+# Serve Admin Dashboard at /gb-admin/
+_admin_build = Path(__file__).parent.parent.parent / "admin" / "dist"
+if _admin_build.exists():
+    app.mount("/gb-admin", StaticFiles(directory=str(_admin_build), html=True), name="admin-static")
+    logging.info(f"Admin dashboard served from {_admin_build} at /gb-admin/")
+
+    @app.get("/gb-admin/{full_path:path}", include_in_schema=False)
+    async def serve_admin(full_path: str):
+        index = _admin_build / "index.html"
+        if index.exists():
+            return FileResponse(str(index))
+        return {"error": "Admin build not found"}
+else:
+    logging.warning(f"Admin build not found at {_admin_build}")
