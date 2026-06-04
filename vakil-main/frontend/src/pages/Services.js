@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import { useAuth } from '../contexts/AuthContext';
+import { useTheme } from '../contexts/ThemeContext';
 
 /* ─── helpers ─── */
 const useEntrance = () => {
@@ -165,6 +166,7 @@ const SecondaryCard = ({ svc, onGo, delay }) => {
 /* ─── page ─── */
 const Services = () => {
   const { user } = useAuth();
+  const { isDark } = useTheme();
   const navigate = useNavigate();
   const heroRef = useEntrance();
 
@@ -198,10 +200,10 @@ const Services = () => {
               <Shield className="w-3.5 h-3.5 text-[#6D071A]" />
               <span className="text-xs font-semibold text-[#6D071A] tracking-wide uppercase">India's Premier Legal Services Platform</span>
             </div>
-            <h1 className="font-heading text-4xl sm:text-5xl lg:text-6xl font-bold text-[#171717] tracking-tight mb-5 leading-tight">
-              Your Legal Services{' '}
+            <h1 className={`font-heading text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight mb-5 leading-tight ${isDark ? 'text-[#F5EDD8]' : 'text-[#171717]'}`}>
+              Your Complete Legal{' '}
               <span className="text-[#6D071A] relative inline-block">
-                Hub
+                Arsenal
                 <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-[#D4AF37] to-[#6D071A] rounded-full" />
               </span>
             </h1>
