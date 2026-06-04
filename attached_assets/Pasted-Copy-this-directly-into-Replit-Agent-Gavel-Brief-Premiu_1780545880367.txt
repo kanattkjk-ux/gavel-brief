@@ -1,0 +1,300 @@
+Copy this directly into **Replit Agent**:
+
+---
+
+# Gavel & Brief – Premium Black, Gold & Burgundy Theme Upgrade + Full RAG Conversion
+
+Analyze the entire codebase and implement the following changes WITHOUT removing any existing functionality.
+
+## IMPORTANT THEME RULE
+
+**Do NOT remove Burgundy from the project.**
+
+Burgundy is a core brand color and must remain visible in both Light Mode and Dark Mode.
+
+Approved Brand Colors:
+
+### Primary Luxury Gold
+
+* #FFD700
+* #D4AF37
+* #C9A227
+* #B8860B
+
+### Premium Burgundy
+
+* #6D071A
+* #7D1022
+* #8B1538
+* #5A0015
+
+Use:
+
+* Gold for luxury accents and decorative patterns.
+* Burgundy for buttons, highlights, cards, badges, CTAs, and branding elements.
+
+---
+
+## FIX DARK MODE DECORATIVE PATTERNS
+
+Currently Client, Lawyer, and Writer pages show:
+
+* Black background
+* Red decorative arc pattern
+
+This happened because a previous gold prompt accidentally converted gold styling into red styling.
+
+### Required Fix
+
+Keep the exact decorative pattern design but:
+
+* Remove red pattern colors.
+* Replace with premium gold pattern.
+* Keep black background.
+* Preserve existing geometry.
+* Do not change layout.
+
+Target look:
+
+Luxury black background with subtle metallic gold arc patterns.
+
+Apply to:
+
+* Client Dashboard
+* Lawyer Dashboard
+* Writer Dashboard
+* Profile Pages
+* Authentication Pages
+* Loading Screen
+
+---
+
+## KEEP PATTERN VISIBLE IN DARK MODE
+
+The homepage decorative pattern currently exists in Light Mode but disappears in Dark Mode.
+
+### Required Fix
+
+Make the pattern visible in Dark Mode.
+
+Requirements:
+
+* Same pattern as Light Mode.
+* Gold outline version.
+* 10–18% opacity.
+* Elegant and subtle.
+* Maintain readability.
+
+Apply to:
+
+* Hero Section
+* Landing Page
+* About Section
+* Legal AI Sections
+* Dashboard Pages
+
+Dark Mode should never become plain black.
+
+---
+
+## LOADING SCREEN FIX
+
+The loading page currently changes gold elements into red.
+
+### Fix
+
+Loading screen must use:
+
+* Black background
+* Gold decorative pattern
+* Gold logo glow
+* Gold loading indicators
+* Gold animations
+
+Burgundy may be used only as a secondary accent.
+
+Remove red styling completely.
+
+---
+
+## HOMEPAGE 3D MODEL VISIBILITY IMPROVEMENT
+
+The following models are too transparent and dim:
+
+* Scales of Justice
+* Law Books
+* Court Table
+* Pillars
+* Gavel
+
+### Improve Realism
+
+Requirements:
+
+* Increase opacity significantly.
+* Improve textures.
+* Improve metallic reflections.
+* Improve gold material quality.
+* Improve lighting.
+* Improve shadows.
+* Increase visibility in both Light and Dark Mode.
+* Make assets feel realistic and premium.
+
+Users should instantly recognize every legal object.
+
+---
+
+## REMOVE COURTROOM ASSEMBLY ANIMATION
+
+A previous implementation planned to make:
+
+* Pillars
+* Court Table
+* Books
+* Gavel
+* Scales
+
+assemble gradually after page load.
+
+### Remove This Entirely
+
+Requirements:
+
+* No assembly sequence.
+* No staged appearance.
+* No delayed rendering.
+* No transition wait time.
+
+The full courtroom scene must appear instantly when the homepage loads.
+
+All 3D models should already be visible on first render.
+
+---
+
+# FULL AI CONVERSION TO RAG
+
+The system must operate as a true Retrieval-Augmented Generation platform.
+
+### REMOVE DECISION-TREE-BASED RESPONSE LOGIC
+
+Do NOT rely on static decision trees.
+
+All legal answers should be generated through retrieval.
+
+---
+
+## RAG KNOWLEDGE SOURCES
+
+Create ingestion pipelines for:
+
+* Supreme Court Judgments
+* High Court Judgments
+* Indian Constitution
+* Bare Acts
+* Central Acts
+* State Acts
+* Legal Procedures
+* Government Legal Portals
+* Legal FAQs
+* Uploaded PDFs
+* User Documents
+* Case Files
+
+---
+
+## RAG ARCHITECTURE
+
+User Query
+
+↓
+
+Embedding Generation
+
+↓
+
+Supabase pgvector
+
+↓
+
+Semantic Similarity Search
+
+↓
+
+Top Relevant Chunks
+
+↓
+
+Context Injection
+
+↓
+
+LLM Generation
+
+↓
+
+Source Citations
+
+↓
+
+Final Response
+
+---
+
+## REQUIREMENTS
+
+* Intelligent document chunking.
+* Automatic PDF ingestion.
+* Embedding generation.
+* Vector storage in Supabase pgvector.
+* Semantic retrieval before every response.
+* Source attribution.
+* Hallucination reduction.
+* Context-aware answers.
+* Lawyer mode support.
+* Client mode support.
+* Writer mode support.
+* Multi-document retrieval.
+
+---
+
+## BRANDING RULES
+
+### Keep Burgundy Visible
+
+DO NOT replace Burgundy.
+
+Burgundy should remain visible in:
+
+* Buttons
+* CTAs
+* Feature cards
+* Active states
+* Navigation highlights
+* Premium UI accents
+
+### Use Gold For
+
+* Decorative patterns
+* Luxury borders
+* Premium highlights
+* Hero accents
+* Loading effects
+* Premium visual elements
+
+Final visual style should feel like:
+
+**"A luxury legal intelligence platform combining Supreme Court aesthetics, premium law-firm branding, enterprise AI, black backgrounds, gold decorative patterns, and rich burgundy accents."**
+
+### Success Criteria
+
+✅ Burgundy remains in both Light and Dark Mode
+✅ Gold decorative patterns replace all red patterns
+✅ Dark Mode retains visible decorative patterns
+✅ Loading screen uses black + gold theme
+✅ 3D legal assets are realistic and clearly visible
+✅ No courtroom assembly animation
+✅ Full courtroom visible immediately on page load
+✅ Entire AI system is RAG-based
+✅ Decision-tree logic removed from legal intelligence responses
+✅ Supabase pgvector retrieval active before every AI response
+✅ Consistent premium Black + Gold + Burgundy branding across the entire platform.

@@ -106,6 +106,7 @@ const ClientHome = () => {
     try {
       const { data } = await axios.post(`${API_URL}/api/get-questions`, {
         category,
+        description,
         question_id: null,
         previous_answers: {}
       });
@@ -134,6 +135,7 @@ const ClientHome = () => {
     try {
       const { data } = await axios.post(`${API_URL}/api/get-questions`, {
         category,
+        description,
         question_id: currentQuestion.id,
         previous_answers: updatedAnswers
       });

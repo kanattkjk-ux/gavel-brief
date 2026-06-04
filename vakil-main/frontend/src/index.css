@@ -61,9 +61,9 @@
   --theme-navbar-border: rgba(212,175,55,0.12);
   --theme-dropdown-bg: #141414;
   --theme-preloader-bg: #0d0d0d;
-  --theme-pattern-opacity: 0.04;
-  --vakil-wine: #D4AF37;
-  --vakil-wine-2: #C9A227;
+  --theme-pattern-opacity: 0.14;
+  --vakil-wine: #8B1538;
+  --vakil-wine-2: #7D1022;
   --vakil-gold: #D4AF37;
   --vakil-soft: #0d0d0d;
   --vakil-ink: #e8e8e8;
@@ -89,13 +89,13 @@ code { font-family: 'Courier New', monospace; }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
-/* Gold pattern — dark mode inverts to black background with gold lines */
+/* Gold pattern — dark mode shows gold lines on dark background */
 .page-gold-pattern {
   transition: opacity 0.4s ease, filter 0.4s ease;
 }
 .dark .page-gold-pattern {
-  filter: invert(1) hue-rotate(180deg) contrast(1.8) brightness(1.6) saturate(2.5);
-  opacity: 0.55 !important;
+  filter: invert(1) brightness(2.4) sepia(0.85) saturate(4) hue-rotate(8deg);
+  opacity: 0.15 !important;
 }
 
 /* Cards and panels */
@@ -326,12 +326,12 @@ input::placeholder, textarea::placeholder {
 /* Page backgrounds */
 .dark .min-h-screen { background-color: #0d0d0d; }
 
-/* Rebrand — dark mode: wine → gold, blue → gold */
+/* Rebrand — dark mode: keep burgundy for buttons/CTAs, gold for decorative */
 .dark .bg-slate-900, .dark .bg-slate-800, .dark .bg-slate-700,
 .dark .bg-blue-500, .dark .bg-blue-600, .dark .bg-indigo-500, .dark .bg-indigo-600,
 .dark .bg-violet-500, .dark .bg-violet-600 {
-  background-color: #D4AF37 !important;
-  background-image: linear-gradient(135deg, #D4AF37, #C9A227) !important;
+  background-color: #8B1538 !important;
+  background-image: linear-gradient(135deg, #8B1538, #7D1022) !important;
 }
 
 .dark .text-blue-500, .dark .text-blue-600, .dark .text-indigo-500,

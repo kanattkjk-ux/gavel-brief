@@ -71,7 +71,7 @@ const Preloader = ({ onComplete }) => {
             >
               <img src="/gold-ribbon.png" alt="" draggable={false}
                 className="w-full h-full select-none"
-                style={{ objectFit: 'cover', objectPosition: 'left center', filter: isDark ? 'invert(1) hue-rotate(180deg) brightness(0.85) saturate(1.4)' : 'none' }}
+                style={{ objectFit: 'cover', objectPosition: 'left center', filter: isDark ? 'brightness(0.8) saturate(1.3)' : 'none' }}
               />
             </motion.div>
 
@@ -88,7 +88,7 @@ const Preloader = ({ onComplete }) => {
                   objectFit: 'cover', objectPosition: 'left center',
                   opacity: isDark ? 0.7 : 0.55,
                   mixBlendMode: isDark ? 'screen' : 'multiply',
-                  filter: isDark ? 'invert(1) hue-rotate(180deg) brightness(1.1) saturate(1.3)' : 'brightness(1.08) saturate(1.1)',
+                  filter: isDark ? 'brightness(0.9) saturate(1.4)' : 'brightness(1.08) saturate(1.1)',
                 }}
               />
             </motion.div>
@@ -106,7 +106,7 @@ const Preloader = ({ onComplete }) => {
                   objectFit: 'cover', objectPosition: 'left center',
                   opacity: isDark ? 0.5 : 0.35,
                   mixBlendMode: isDark ? 'screen' : 'overlay',
-                  filter: isDark ? 'invert(1) hue-rotate(180deg) brightness(1.2) saturate(1.5)' : 'none',
+                  filter: isDark ? 'brightness(0.85) saturate(1.5)' : 'none',
                 }}
               />
             </motion.div>

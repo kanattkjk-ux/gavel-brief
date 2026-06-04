@@ -778,6 +778,7 @@ class DynamicQuestionRequest(BaseModel):
     category: str
     question_id: Optional[str] = None
     previous_answers: Optional[Dict[str, str]] = {}
+    description: Optional[str] = ""
 
 class StampPaperDiagnosticRequest(BaseModel):
     is_court_case: bool
@@ -2853,6 +2854,115 @@ async def analyze_case(request: CaseAnalysisRequest):
         )
 
 
+# ============ RAG SEARCH ENDPOINT ============
+
+class RAGSearchRequest(BaseModel):
+    query: str
+    search_type: str = "all"  # "laws", "cases", "all"
+    top_k: int = 5
+
+@api_router.post("/rag-search")
+async def rag_semantic_search(request: RAGSearchRequest):
+    """
+    Full RAG semantic search — retrieves relevant laws and past cases for a query.
+    Uses TF-IDF similarity (upgradeable to pgvector once Supabase schema is extended).
+    Returns ranked results with source citations for LLM context injection.
+    """
+    try:
+        results: Dict[str, Any] = {
+            "query": request.query,
+            "laws": [],
+            "cases": [],
+            "total_retrieved": 0,
+            "retrieval_method": "tfidf_cosine_similarity",
+        }
+
+        if request.search_type in ("laws", "all"):
+            laws = await find_relevant_laws(request.query, top_k=request.top_k)
+            results["laws"] = laws
+
+        if request.search_type in ("cases", "all"):
+            cases = await find_similar_cases(request.query, top_k=request.top_k)
+            results["cases"] = cases
+
+        results["total_retrieved"] = len(results["laws"]) + len(results["cases"])
+
+        # Build LLM-ready context string for downstream use
+        context_parts = []
+        if results["laws"]:
+            context_parts.append("### Relevant Laws\n" + "\n".join(
+                f"- **{l['ipc_section']}** — {l['title']}: {l['description'][:200]}"
+                for l in results["laws"]
+            ))
+        if results["cases"]:
+            context_parts.append("### Similar Past Cases\n" + "\n".join(
+                f"- **{c['title']}** ({c['citation']}, {c['year']}): {c['summary'][:200]}"
+                for c in results["cases"]
+            ))
+        results["rag_context"] = "\n\n".join(context_parts) if context_parts else ""
+
+        return results
+
+    except Exception as e:
+        logging.error(f"Error in rag_search: {str(e)}")
+        raise HTTPException(status_code=500, detail="RAG search failed")
+
+
+@api_router.post("/rag-answer")
+async def rag_answer(query: str = Body(...), context: str = Body(default=""), session_id: str = Body(default="")):
+    """
+    Full RAG pipeline: retrieves context then generates a grounded LLM answer with source citations.
+    Reduces hallucination by anchoring every answer to retrieved documents.
+    """
+    try:
+        from emergentintegrations.llm.chat import LlmChat, UserMessage
+
+        if not EMERGENT_LLM_KEY:
+            raise HTTPException(status_code=503, detail="AI key not configured")
+
+        # Retrieve if no context provided
+        if not context:
+            laws = await find_relevant_laws(query, top_k=4)
+            cases = await find_similar_cases(query, top_k=3)
+            ctx_parts = []
+            if laws:
+                ctx_parts.append("Relevant Indian Laws:\n" + "\n".join(
+                    f"- {l['ipc_section']} {l['title']}: {l['description'][:300]}"
+                    for l in laws
+                ))
+            if cases:
+                ctx_parts.append("Similar Court Cases:\n" + "\n".join(
+                    f"- {c['title']} ({c['citation']}, {c['year']}): {c['summary'][:300]}"
+                    for c in cases
+                ))
+            context = "\n\n".join(ctx_parts)
+
+        system_msg = """You are a senior Indian legal AI assistant. You ONLY answer based on the provided legal documents and cases.
+Always cite specific sections, articles, or case names from the context. If the context doesn't cover the query, say so clearly.
+Never fabricate legal provisions or case citations. Use plain language."""
+
+        prompt = f"""Retrieved Legal Context:
+{context or 'No specific documents retrieved.'}
+
+---
+User Legal Query: {query}
+
+Provide a grounded, cited answer based strictly on the above context."""
+
+        chat = LlmChat(
+            api_key=EMERGENT_LLM_KEY,
+            session_id=session_id or f"rag_answer_{datetime.now().timestamp()}",
+            system_message=system_msg,
+        ).with_model("openai", "gpt-4o-mini")
+
+        answer = await chat.send_message(UserMessage(text=prompt))
+        return {"answer": answer, "context_used": bool(context), "query": query}
+
+    except Exception as e:
+        logging.error(f"Error in rag_answer: {str(e)}")
+        raise HTTPException(status_code=500, detail="RAG answer generation failed")
+
+
 # ============ INTELLIGENCE ENGINE ENDPOINTS ============
 
 @api_router.post("/extract-keywords")
@@ -2880,50 +2990,143 @@ async def detect_category(request: CategoryDetectionRequest):
         logging.error(f"Error in detect_category: {str(e)}")
         raise HTTPException(status_code=500, detail="Failed to detect category")
 
+async def _generate_rag_question(
+    category: str,
+    description: str,
+    previous_answers: Dict[str, str],
+    question_index: int,
+) -> Optional[Dict[str, Any]]:
+    """Generate next contextual question via RAG + LLM. Falls back to static tree."""
+    MAX_QUESTIONS = 5
+    if question_index >= MAX_QUESTIONS:
+        return None
+
+    try:
+        from emergentintegrations.llm.chat import LlmChat, UserMessage
+
+        if not EMERGENT_LLM_KEY:
+            raise ImportError("EMERGENT_LLM_KEY not configured")
+
+        answered_summary = ""
+        if previous_answers:
+            answered_summary = "\n".join(
+                f"- Q{i+1}: {q_text} → {ans}"
+                for i, (q_text, ans) in enumerate(previous_answers.items())
+            )
+
+        system_message = f"""You are a senior Indian legal expert conducting an intake interview for a {category} case.
+Your task is to ask the SINGLE most important clarifying question that has NOT yet been asked.
+Base your question on what you know about Indian law ({category} matters), the case description, and all prior answers.
+
+Rules:
+- Return ONLY valid JSON with this exact structure:
+  {{"id": "rag_q_{question_index}", "text": "<question text>", "type": "yesno|text|select", "options": ["Yes","No"] or [] }}
+- For yes/no questions use type "yesno" with options ["Yes","No"]
+- For open text use type "text" with options []
+- For multiple choice use type "select" with 3-4 concise options
+- Do NOT repeat any question already answered
+- Focus on facts that determine legal strategy, evidence strength, or applicable IPC sections
+- Keep questions simple, jargon-free, and specific to the case"""
+
+        context_parts = [f"Case Category: {category}"]
+        if description:
+            context_parts.append(f"Case Description: {description[:600]}")
+        if answered_summary:
+            context_parts.append(f"Questions Already Asked and Answered:\n{answered_summary}")
+        context_parts.append(f"This will be question #{question_index + 1} of {MAX_QUESTIONS}.")
+
+        chat = LlmChat(
+            api_key=EMERGENT_LLM_KEY,
+            session_id=f"rag_questions_{datetime.now().timestamp()}",
+            system_message=system_message,
+        ).with_model("openai", "gpt-4o-mini")
+
+        response = await chat.send_message(UserMessage(text="\n".join(context_parts)))
+        raw = response.strip()
+        if raw.startswith("```"):
+            raw = raw.split("```")[1]
+            if raw.startswith("json"):
+                raw = raw[4:]
+        question_obj = json.loads(raw.strip())
+        question_obj["id"] = f"rag_q_{question_index}"
+        return question_obj
+
+    except Exception as e:
+        logging.warning(f"RAG question generation failed: {e}. Using static fallback.")
+        return _static_fallback_question(category, question_index)
+
+
+def _static_fallback_question(category: str, index: int) -> Optional[Dict[str, Any]]:
+    """Minimal static fallback when LLM is unavailable."""
+    banks: Dict[str, List[Dict]] = {
+        "Criminal": [
+            {"id": "rag_q_0", "text": "Have you already filed an FIR with the police?", "type": "yesno", "options": ["Yes", "No"]},
+            {"id": "rag_q_1", "text": "Do you have documentary evidence (photos, videos, witnesses)?", "type": "yesno", "options": ["Yes", "No"]},
+            {"id": "rag_q_2", "text": "When did the incident occur?", "type": "select", "options": ["Within 24 hours", "Within a week", "Within a month", "More than a month ago"]},
+            {"id": "rag_q_3", "text": "Was any weapon or physical harm involved?", "type": "yesno", "options": ["Yes", "No"]},
+            {"id": "rag_q_4", "text": "Do you know the identity of the accused?", "type": "yesno", "options": ["Yes", "No"]},
+        ],
+        "Family": [
+            {"id": "rag_q_0", "text": "Is the marriage registered under a personal law act?", "type": "yesno", "options": ["Yes", "No"]},
+            {"id": "rag_q_1", "text": "Are children involved in this dispute?", "type": "yesno", "options": ["Yes", "No"]},
+            {"id": "rag_q_2", "text": "Have you attempted mediation or counseling?", "type": "yesno", "options": ["Yes", "No"]},
+            {"id": "rag_q_3", "text": "Is there any property or financial asset dispute?", "type": "yesno", "options": ["Yes", "No"]},
+            {"id": "rag_q_4", "text": "What is your primary objective?", "type": "select", "options": ["Divorce", "Maintenance/Alimony", "Child custody", "Domestic violence protection"]},
+        ],
+        "Property": [
+            {"id": "rag_q_0", "text": "Do you have a registered sale deed or title document?", "type": "yesno", "options": ["Yes", "No"]},
+            {"id": "rag_q_1", "text": "Is there a sitting tenant or occupant in dispute?", "type": "yesno", "options": ["Yes", "No"]},
+            {"id": "rag_q_2", "text": "Has any encroachment or boundary dispute occurred?", "type": "yesno", "options": ["Yes", "No"]},
+            {"id": "rag_q_3", "text": "Have you sent a legal notice to the other party?", "type": "yesno", "options": ["Yes", "No"]},
+            {"id": "rag_q_4", "text": "How long has this dispute been ongoing?", "type": "select", "options": ["Less than 6 months", "6–12 months", "1–3 years", "More than 3 years"]},
+        ],
+        "Employment": [
+            {"id": "rag_q_0", "text": "Do you have a written employment contract?", "type": "yesno", "options": ["Yes", "No"]},
+            {"id": "rag_q_1", "text": "Was any termination notice or letter issued?", "type": "yesno", "options": ["Yes", "No"]},
+            {"id": "rag_q_2", "text": "Are unpaid wages or dues involved?", "type": "yesno", "options": ["Yes", "No"]},
+            {"id": "rag_q_3", "text": "Has the matter been raised with HR or a Labour Commissioner?", "type": "yesno", "options": ["Yes", "No"]},
+            {"id": "rag_q_4", "text": "What type of workplace issue is this?", "type": "select", "options": ["Wrongful termination", "Harassment/discrimination", "Salary dispute", "Contract breach"]},
+        ],
+        "Civil": [
+            {"id": "rag_q_0", "text": "Is there a written agreement or contract involved?", "type": "yesno", "options": ["Yes", "No"]},
+            {"id": "rag_q_1", "text": "Have you sent a legal notice to the other party?", "type": "yesno", "options": ["Yes", "No"]},
+            {"id": "rag_q_2", "text": "What is the approximate monetary value of the dispute?", "type": "select", "options": ["Under ₹1 lakh", "₹1–10 lakhs", "₹10–50 lakhs", "Above ₹50 lakhs"]},
+            {"id": "rag_q_3", "text": "Do you have written evidence supporting your claim?", "type": "yesno", "options": ["Yes", "No"]},
+            {"id": "rag_q_4", "text": "Have you explored out-of-court settlement?", "type": "yesno", "options": ["Yes", "No"]},
+        ],
+    }
+    questions = banks.get(category, banks["Civil"])
+    if index < len(questions):
+        return questions[index]
+    return None
+
+
 @api_router.post("/get-questions")
 async def get_dynamic_questions(request: DynamicQuestionRequest):
-    """Get dynamic questions based on category and decision tree"""
+    """RAG-powered dynamic question generation — replaces static decision tree."""
     try:
-        # Load decision trees
-        decision_trees_file = ROOT_DIR / "decision_trees.json"
-        with open(decision_trees_file, "r") as f:
-            decision_trees = json.load(f)
-        
-        category_tree = decision_trees.get(request.category, {})
-        questions = category_tree.get("questions", [])
-        
+        previous = request.previous_answers or {}
+
         if not request.question_id:
-            # Return first question
-            if questions:
-                return {"question": questions[0], "has_more": True}
+            question_index = 0
+        else:
+            try:
+                question_index = int(request.question_id.split("_")[-1]) + 1
+            except (ValueError, IndexError):
+                question_index = len(previous)
+
+        question = await _generate_rag_question(
+            category=request.category,
+            description=request.description or "",
+            previous_answers=previous,
+            question_index=question_index,
+        )
+
+        if question is None:
             return {"question": None, "has_more": False}
-        
-        # Find current question and determine next
-        current_q = None
-        for q in questions:
-            if q["id"] == request.question_id:
-                current_q = q
-                break
-        
-        if not current_q:
-            return {"question": None, "has_more": False}
-        
-        # Get last answer to determine next question
-        last_answer = request.previous_answers.get(request.question_id, "")
-        next_q_id = current_q.get("follow_up", {}).get(last_answer, "end")
-        
-        if next_q_id == "end":
-            return {"question": None, "has_more": False}
-        
-        # Find next question
-        next_q = None
-        for q in questions:
-            if q["id"] == next_q_id:
-                next_q = q
-                break
-        
-        return {"question": next_q, "has_more": next_q is not None}
-    
+
+        return {"question": question, "has_more": question_index < 4}
+
     except Exception as e:
         logging.error(f"Error in get_dynamic_questions: {str(e)}")
         raise HTTPException(status_code=500, detail="Failed to get questions")

@@ -955,18 +955,6 @@ function GavelScene({ onStrikeComplete, isMobile, isDark }) {
   const rippleRef = useRef(null);
   const sceneRef = useRef(null);
   const [isStriking, setIsStriking] = useState(false);
-  const [revealPhase, setRevealPhase] = useState(0);
-
-  useEffect(() => {
-    const timers = [
-      setTimeout(() => setRevealPhase(1), 30),    // pillars
-      setTimeout(() => setRevealPhase(2), 80),    // bench + block
-      setTimeout(() => setRevealPhase(3), 130),   // scales
-      setTimeout(() => setRevealPhase(4), 180),   // books, scroll, candles
-      setTimeout(() => setRevealPhase(5), 230),   // gavel — hero entrance
-    ];
-    return () => timers.forEach(clearTimeout);
-  }, []);
 
   useFrame(({ mouse, clock }) => {
     if (sceneRef.current) {
@@ -1017,73 +1005,75 @@ function GavelScene({ onStrikeComplete, isMobile, isDark }) {
     <group ref={sceneRef}>
       <CinematicCamera isMobile={isMobile} />
 
-      {/* ── Lighting ── warm courtroom | dark: moonlit mystery with gold glow ── */}
-      <ambientLight intensity={isDark ? 0.10 : (isMobile ? 0.55 : 0.22)} color={isDark ? "#0a102a" : "#fff4e0"} />
-      {/* Main key — warm chandelier | dark: cold moonlight */}
-      <directionalLight position={[5, 22, 12]} intensity={isDark ? 1.6 : (isMobile ? 3.2 : 4.8)} color={isDark ? "#6878c8" : "#fff6ee"}
+      {/* ── Lighting ── warm courtroom | dark: premium gold-lit luxury ── */}
+      <ambientLight intensity={isDark ? 0.38 : (isMobile ? 0.55 : 0.22)} color={isDark ? "#c8a840" : "#fff4e0"} />
+      {/* Main key — warm chandelier | dark: warm gold fill */}
+      <directionalLight position={[5, 22, 12]} intensity={isDark ? 2.8 : (isMobile ? 3.2 : 4.8)} color={isDark ? "#f0d890" : "#fff6ee"}
         castShadow={!isMobile}
         shadow-mapSize={[4096, 4096]}
         shadow-camera-near={0.5} shadow-camera-far={65}
         shadow-camera-left={-20} shadow-camera-right={20}
         shadow-camera-top={20} shadow-camera-bottom={-20}
         shadow-bias={-0.00018} shadow-normalBias={0.016} />
-      {/* Cool fill from left */}
-      <directionalLight position={[-10, 12, 7]} intensity={isDark ? 2.5 : (isMobile ? 1.1 : 2.0)} color={isDark ? "#4050d8" : "#c8d8ff"} />
-      {/* Back rim */}
-      <directionalLight position={[0, 8, -12]} intensity={isDark ? 0.8 : (isMobile ? 0.6 : 1.6)} color={isDark ? "#D4AF37" : "#e0c8a0"} />
+      {/* Fill from left — warm gold */}
+      <directionalLight position={[-10, 12, 7]} intensity={isDark ? 2.2 : (isMobile ? 1.1 : 2.0)} color={isDark ? "#D4AF37" : "#c8d8ff"} />
+      {/* Back rim — gold accent */}
+      <directionalLight position={[0, 8, -12]} intensity={isDark ? 1.4 : (isMobile ? 0.6 : 1.6)} color={isDark ? "#FFD700" : "#e0c8a0"} />
       {!isMobile && <>
-        {/* Dramatic spot — crimson in light | deep indigo in dark */}
-        <spotLight position={[-18, 16, 10]} intensity={isDark ? 6.0 : 8.0} color={isDark ? "#1020b0" : "#7C1D2B"} angle={0.28} penumbra={0.85} castShadow />
-        {/* Gold under-fill — glows brighter in dark */}
-        <pointLight position={[0.3, -3.5, 2.8]} intensity={isDark ? 6.0 : 2.8} color="#D4AF37" distance={18} decay={1.8} />
-        {/* Side fill — amber in light | electric blue in dark */}
-        <pointLight position={[6, 1.0, 6]} intensity={isDark ? 3.2 : 2.2} color={isDark ? "#2040d0" : "#ff9040"} distance={28} decay={2} />
-        {/* Overhead accent — blue */}
-        <pointLight position={[0, 14, -2]} intensity={isDark ? 4.0 : 2.4} color={isDark ? "#5060f8" : "#c0c8f8"} distance={42} decay={1.4} />
-        {/* Wide fill */}
-        <pointLight position={[10, 5, 5]} intensity={isDark ? 0.8 : 1.4} color={isDark ? "#D4AF37" : "#f8e8d0"} distance={26} decay={2} />
-        {/* Books spotlight */}
-        <pointLight position={[3.4, -2.8, 2.5]} intensity={isDark ? 3.0 : 1.8} color="#D4AF37" distance={12} decay={2.2} />
-        {/* Scales shimmer */}
-        <pointLight position={[-3.2, -1.0, 3.0]} intensity={isDark ? 4.0 : 2.0} color="#D4AF37" distance={14} decay={2} />
+        {/* Dramatic spot — burgundy in light | warm gold in dark */}
+        <spotLight position={[-18, 16, 10]} intensity={isDark ? 7.0 : 8.0} color={isDark ? "#D4AF37" : "#7C1D2B"} angle={0.28} penumbra={0.85} castShadow />
+        {/* Gold under-fill — strong gold glow on all models */}
+        <pointLight position={[0.3, -3.5, 2.8]} intensity={isDark ? 8.5 : 2.8} color="#D4AF37" distance={22} decay={1.6} />
+        {/* Side fill — warm amber both modes */}
+        <pointLight position={[6, 1.0, 6]} intensity={isDark ? 3.5 : 2.2} color={isDark ? "#D4A83A" : "#ff9040"} distance={28} decay={2} />
+        {/* Overhead accent — gold */}
+        <pointLight position={[0, 14, -2]} intensity={isDark ? 3.5 : 2.4} color={isDark ? "#C9A84C" : "#c0c8f8"} distance={42} decay={1.4} />
+        {/* Wide fill — gold wash */}
+        <pointLight position={[10, 5, 5]} intensity={isDark ? 2.0 : 1.4} color={isDark ? "#D4AF37" : "#f8e8d0"} distance={26} decay={2} />
+        {/* Books spotlight — gold */}
+        <pointLight position={[3.4, -2.8, 2.5]} intensity={isDark ? 4.5 : 1.8} color="#D4AF37" distance={14} decay={2.0} />
+        {/* Scales shimmer — gold */}
+        <pointLight position={[-3.2, -1.0, 3.0]} intensity={isDark ? 5.5 : 2.0} color="#FFD700" distance={16} decay={1.8} />
         {isDark && <>
-          {/* Extra dark-mode gold rim for models */}
-          <pointLight position={[0, -2, 5]} intensity={4.5} color="#FFD700" distance={20} decay={1.6} />
-          <pointLight position={[0, 10, 0]} intensity={2.0} color="#D4AF37" distance={30} decay={2} />
+          {/* Extra dark-mode gold rim — every model surface catches gold */}
+          <pointLight position={[0, -2, 5]} intensity={6.5} color="#FFD700" distance={22} decay={1.4} />
+          <pointLight position={[0, 10, 0]} intensity={3.0} color="#D4AF37" distance={32} decay={1.8} />
+          <pointLight position={[-6, -1, 4]} intensity={3.0} color="#C9A84C" distance={20} decay={2} />
+          <pointLight position={[6, -1, 4]} intensity={3.0} color="#C9A84C" distance={20} decay={2} />
         </>}
       </>}
-      {/* Gavel hero light */}
-      <pointLight position={[0.5, 2.5, 6.0]} intensity={isDark ? 9.0 : (isMobile ? 3.5 : 5.5)} color="#D4A83A" distance={24} decay={1.9} />
-      <pointLight position={[-3.2, -3.0, 2.0]} intensity={isDark ? 3.5 : (isMobile ? 1.2 : 1.8)} color={isDark ? "#D4AF37" : "#ffb84a"} distance={12} decay={2.4} />
+      {/* Gavel hero light — premium gold spotlight */}
+      <pointLight position={[0.5, 2.5, 6.0]} intensity={isDark ? 12.0 : (isMobile ? 3.5 : 5.5)} color="#D4A83A" distance={26} decay={1.7} />
+      <pointLight position={[-3.2, -3.0, 2.0]} intensity={isDark ? 4.5 : (isMobile ? 1.2 : 1.8)} color={isDark ? "#D4AF37" : "#ffb84a"} distance={14} decay={2.2} />
 
       <Environment preset={isDark ? "night" : "warehouse"} background={false} />
       <BackWall isDark={isDark} />
       <MarbleFloor isDark={isDark} />
 
-      {/* ── Cinematic staggered reveal — each group rises from below ── */}
-      <RiseGroup show={revealPhase >= 1} riseDistance={6}>
+      {/* ── Full courtroom — all assets visible immediately on load ── */}
+      <group>
         <Pillars />
-      </RiseGroup>
+      </group>
 
-      <RiseGroup show={revealPhase >= 2} riseDistance={4}>
+      <group>
         <JudgeBench />
         <SoundBlock />
-      </RiseGroup>
+      </group>
 
-      <RiseGroup show={revealPhase >= 3} riseDistance={5}>
+      <group>
         <ScalesOfJustice />
-      </RiseGroup>
+      </group>
 
-      <RiseGroup show={revealPhase >= 4} riseDistance={3.5}>
+      <group>
         <LawBooks />
         <DocumentScroll />
         <Candles />
-      </RiseGroup>
+      </group>
 
-      {/* Gavel rises last — the hero of the scene */}
-      <RiseGroup show={revealPhase >= 5} riseDistance={7}>
+      {/* Gavel — hero of the scene */}
+      <group>
         <GavelMesh gavelRef={gavelRef} onStrike={handleStrike} isDark={isDark} />
-      </RiseGroup>
+      </group>
 
       {/* Strike ripple */}
       <mesh ref={rippleRef} position={[0.3, -4.52, 0.28]} rotation={[-Math.PI / 2, 0, 0]}>
