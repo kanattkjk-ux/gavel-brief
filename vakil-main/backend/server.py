@@ -4616,6 +4616,14 @@ app.add_middleware(
 
 app.include_router(api_router)
 
+# Admin dashboard routes
+try:
+    from admin_routes import router as admin_router
+    app.include_router(admin_router)
+    logging.info("Admin routes registered")
+except Exception as _admin_err:
+    logging.warning(f"Admin routes not loaded: {_admin_err}")
+
 # WebSocket for Video Consultation
 @app.websocket("/ws/video/{room_id}")
 async def video_websocket(websocket: WebSocket, room_id: str):

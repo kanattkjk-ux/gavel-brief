@@ -23,6 +23,10 @@ args = "Backend API"
 task = "workflow.run"
 args = "Start application"
 
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Admin Dashboard"
+
 [[workflows.workflow]]
 name = "Backend API"
 author = "agent"
@@ -47,6 +51,18 @@ waitForPort = 5000
 [workflows.workflow.metadata]
 outputType = "webview"
 
+[[workflows.workflow]]
+name = "Admin Dashboard"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd admin && npm run dev"
+waitForPort = 3001
+
+[workflows.workflow.metadata]
+outputType = "console"
+
 [[ports]]
 localPort = 5000
 externalPort = 80
@@ -64,6 +80,10 @@ localPort = 8000
 externalPort = 8000
 exposeLocalhost = true
 
+[[ports]]
+localPort = 3001
+externalPort = 3001
+
 [deployment]
 deploymentTarget = "vm"
 run = ["bash", "-c", "cd vakil-main/backend && gunicorn server:app --bind 0.0.0.0:5000 --worker-class uvicorn.workers.UvicornWorker --workers 1 --timeout 120"]
@@ -75,3 +95,5 @@ build = ["bash", "-c", "pip install -r vakil-main/backend/requirements.txt gunic
 JWT_SECRET = "f16622d4e62e6ba9769f7465bf1c98db4f0eaafdeb2407ed96fcc50c1a269cf9"
 SUPABASE_URL = "https://tuntezbubswvzbcgstow.supabase.co"
 SUPABASE_SERVICE_ROLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR1bnRlemJ1YnN3dnpiY2dzdG93Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3OTk1ODYxNSwiZXhwIjoyMDk1NTM0NjE1fQ.birq-or1KlR6RmpVVceY-bghew00wHjgDRcghlQa--E"
+ADMIN_EMAIL = "admin@gavelandbrief.com"
+ADMIN_PASSWORD = "Admin@GB2024"
