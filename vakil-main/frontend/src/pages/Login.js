@@ -80,8 +80,10 @@ const Login = () => {
         {/* Top: welcome text and form intro */}
         <div className="relative z-10 flex flex-col justify-center flex-1 px-16 text-white">
           <div className="flex items-center gap-3 mb-8">
-            <img src="/logo.png" alt="Gavel & Brief" className="w-14 h-14 rounded-xl object-contain flex-shrink-0"
-              style={{ boxShadow: '0 0 20px rgba(201,168,76,0.35)' }} />
+            <div className="w-14 h-14 rounded-full flex-shrink-0 flex items-center justify-center overflow-hidden"
+              style={{ background: 'rgba(255,255,255,0.15)', border: '2px solid rgba(201,168,76,0.5)', boxShadow: '0 0 24px rgba(201,168,76,0.45)' }}>
+              <img src="/logo-circle.png" alt="Gavel & Brief" className="w-12 h-12 object-contain" />
+            </div>
             <div>
               <h1 className="font-serif text-2xl font-bold text-white">Gavel &amp; Brief</h1>
               <p className="text-sm" style={{ color: 'rgba(201,168,76,0.8)' }}>Legal Intelligence Platform</p>
@@ -275,10 +277,33 @@ const Login = () => {
             </p>
           </div>
 
-          <div className="mt-6 pt-6 border-t border-slate-200">
+          <div className="mt-6 pt-6 border-t border-slate-200 space-y-3">
             <Link to="/" className="text-slate-600 hover:text-slate-900 text-sm flex items-center justify-center gap-2">
               ← Back to Homepage
             </Link>
+            <a
+              href={process.env.REACT_APP_ADMIN_URL || '#'}
+              target="_blank"
+              rel="noreferrer"
+              className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border text-sm font-medium transition-all group w-full"
+              style={{
+                background: 'rgba(124,29,43,0.04)',
+                borderColor: 'rgba(124,29,43,0.2)',
+                color: '#7C1D2B'
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.background = 'rgba(124,29,43,0.08)';
+                e.currentTarget.style.borderColor = '#7C1D2B';
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.background = 'rgba(124,29,43,0.04)';
+                e.currentTarget.style.borderColor = 'rgba(124,29,43,0.2)';
+              }}
+            >
+              <img src="/logo-circle.png" alt="" className="w-5 h-5 rounded-full object-cover" />
+              <span>Admin Dashboard</span>
+              <span style={{ color: 'rgba(124,29,43,0.5)' }}>→</span>
+            </a>
           </div>
         </div>
       </div>

@@ -166,14 +166,14 @@ export default function Chunks() {
             </div>
             <div>
               <label className="label">Content</label>
-              <div className="bg-surface-2 rounded-lg p-4 text-sm text-gray-300 max-h-60 overflow-y-auto border border-white/8 leading-relaxed">
+              <div className="bg-surface-2 rounded-lg p-4 text-sm text-gray-300 max-h-60 overflow-y-auto border border-white/[0.08] leading-relaxed">
                 {viewChunk.content}
               </div>
             </div>
             {viewChunk.embedding && viewChunk.embedding.length > 0 && (
               <div>
                 <label className="label">Embedding ({viewChunk.embedding.length} dimensions)</label>
-                <div className="bg-surface-2 rounded-lg p-3 text-xs text-gray-400 font-mono overflow-x-auto border border-white/8">
+                <div className="bg-surface-2 rounded-lg p-3 text-xs text-gray-400 font-mono overflow-x-auto border border-white/[0.08]">
                   [{viewChunk.embedding.slice(0, 8).map(v => v.toFixed(4)).join(', ')}, …]
                 </div>
               </div>
@@ -181,7 +181,7 @@ export default function Chunks() {
             {viewChunk.metadata && Object.keys(viewChunk.metadata).length > 0 && (
               <div>
                 <label className="label">Metadata</label>
-                <pre className="bg-surface-2 rounded-lg p-3 text-xs text-gray-400 overflow-x-auto border border-white/8">
+                <pre className="bg-surface-2 rounded-lg p-3 text-xs text-gray-400 overflow-x-auto border border-white/[0.08]">
                   {JSON.stringify(viewChunk.metadata, null, 2)}
                 </pre>
               </div>

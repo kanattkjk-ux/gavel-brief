@@ -1,13 +1,14 @@
 import { Outlet, NavLink, useNavigate } from 'react-router-dom'
 import {
   LayoutDashboard, FileText, Layers, BookOpen, Scale, Gavel,
-  Users, Settings, LogOut, Menu, X, ChevronRight
+  Users, Settings, LogOut, Menu, X, Workflow
 } from 'lucide-react'
 import { useState } from 'react'
 import { clearToken } from '../lib/auth'
 
 const nav = [
   { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { to: '/pipeline', label: 'PDF Pipeline', icon: Workflow },
   { to: '/documents', label: 'Documents', icon: FileText },
   { to: '/chunks', label: 'Chunks', icon: Layers },
   { to: '/sources', label: 'Sources', icon: BookOpen },
@@ -30,12 +31,12 @@ export default function Layout() {
     <div className="flex h-screen overflow-hidden">
       {/* Sidebar */}
       <aside
-        className={`flex flex-col bg-surface-1 border-r border-white/8 transition-all duration-300 ${
+        className={`flex flex-col bg-surface-1 border-r border-white/[0.08] transition-all duration-300 ${
           sidebarOpen ? 'w-60' : 'w-16'
         }`}
       >
         {/* Logo */}
-        <div className="flex items-center gap-3 px-4 py-5 border-b border-white/8">
+        <div className="flex items-center gap-3 px-4 py-5 border-b border-white/[0.08]">
           <div className="w-8 h-8 bg-brand-600 rounded-lg flex items-center justify-center flex-shrink-0">
             <Scale size={16} className="text-white" />
           </div>
@@ -80,7 +81,7 @@ export default function Layout() {
         </nav>
 
         {/* Bottom */}
-        <div className="p-2 border-t border-white/8">
+        <div className="p-2 border-t border-white/[0.08]">
           <button
             onClick={logout}
             className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-gray-400 hover:text-red-400 hover:bg-red-500/10 transition-all text-sm font-medium"
@@ -94,7 +95,7 @@ export default function Layout() {
       {/* Main */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Topbar */}
-        <header className="flex items-center justify-between px-6 py-4 border-b border-white/8 bg-surface-1/60 backdrop-blur-sm">
+        <header className="flex items-center justify-between px-6 py-4 border-b border-white/[0.08] bg-surface-1/60 backdrop-blur-sm">
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
             className="text-gray-400 hover:text-gray-100 transition-colors p-1 rounded-lg hover:bg-white/5"

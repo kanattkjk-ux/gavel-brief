@@ -3,6 +3,7 @@ import { Toaster } from 'react-hot-toast'
 import Layout from './components/Layout'
 import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
+import Pipeline from './pages/Pipeline'
 import Documents from './pages/Documents'
 import Chunks from './pages/Chunks'
 import Sources from './pages/Sources'
@@ -43,6 +44,7 @@ export default function App() {
         >
           <Route index element={<Navigate to="/dashboard" replace />} />
           <Route path="dashboard" element={<Dashboard />} />
+          <Route path="pipeline" element={<Pipeline />} />
           <Route path="documents" element={<Documents />} />
           <Route path="chunks" element={<Chunks />} />
           <Route path="sources" element={<Sources />} />

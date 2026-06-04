@@ -18,10 +18,10 @@ interface TableProps<T> {
 
 export function Table<T>({ columns, data, loading, emptyMessage = 'No records found', keyExtractor }: TableProps<T>) {
   return (
-    <div className="overflow-x-auto rounded-xl border border-white/8">
+    <div className="overflow-x-auto rounded-xl border border-white/[0.08]">
       <table className="w-full text-sm">
         <thead>
-          <tr className="border-b border-white/8 bg-surface-2">
+          <tr className="border-b border-white/[0.08] bg-surface-2">
             {columns.map((col) => (
               <th
                 key={col.key}

@@ -4624,6 +4624,14 @@ try:
 except Exception as _admin_err:
     logging.warning(f"Admin routes not loaded: {_admin_err}")
 
+# PDF ingestion pipeline routes
+try:
+    from pdf_pipeline import router as pipeline_router
+    app.include_router(pipeline_router)
+    logging.info("PDF pipeline routes registered")
+except Exception as _pipe_err:
+    logging.warning(f"PDF pipeline routes not loaded: {_pipe_err}")
+
 # WebSocket for Video Consultation
 @app.websocket("/ws/video/{room_id}")
 async def video_websocket(websocket: WebSocket, room_id: str):

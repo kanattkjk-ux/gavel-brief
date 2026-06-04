@@ -90,12 +90,12 @@ export default function Settings() {
                 <StatusBadge ok={settings.mongo_configured} label={`MongoDB: ${settings.mongo_configured ? 'Connected' : 'Not configured'}`} />
               </div>
 
-              <div className="border-t border-white/8 pt-4">
+              <div className="border-t border-white/[0.08] pt-4">
                 <p className="text-xs text-gray-500 uppercase tracking-wider mb-2">Database Backend</p>
                 <span className="badge bg-brand-600/20 text-brand-400 text-sm">{settings.db_backend || 'Unknown'}</span>
               </div>
 
-              <div className="border-t border-white/8 pt-4 grid grid-cols-2 gap-4">
+              <div className="border-t border-white/[0.08] pt-4 grid grid-cols-2 gap-4">
                 <div>
                   <p className="text-xs text-gray-500 mb-1">Documents</p>
                   <p className="text-xl font-bold text-gray-100">{settings.document_count?.toLocaleString() ?? 0}</p>
